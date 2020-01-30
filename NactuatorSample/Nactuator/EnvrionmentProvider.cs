@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,20 @@ namespace Nactuator
     public class EnvironmentProvider
     {
         private readonly IConfiguration configuration;
+        private readonly IHostingEnvironment hostingEnvironment;
 
-        public EnvironmentProvider(IConfiguration configuration)
+        public EnvironmentProvider(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             this.configuration = configuration;
+            this.hostingEnvironment = hostingEnvironment;
+        }
+
+        public EnvironmentData GetEnvironmentData()
+        {
+            return new EnvironmentData() { 
+                activeProfiles = new List<string>() { hostingEnvironment.EnvironmentName},
+                propertySources = ReadConfiguration()
+            };
         }
 
         public IReadOnlyCollection<PropertySources> ReadConfiguration()

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 
 namespace NactuatorTest
 {
@@ -25,7 +26,7 @@ namespace NactuatorTest
                provider
             });
 
-            var sut = new EnvironmentProvider(configurationRoot);
+            var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
             result.Should().HaveCount(1);
@@ -60,7 +61,7 @@ namespace NactuatorTest
             });
 
 
-            var sut = new EnvironmentProvider(configurationRoot);
+            var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
@@ -70,5 +71,36 @@ namespace NactuatorTest
             lastResult.Name.Should().Be("MemoryConfigurationProvider - 1");
   
         }
+            
+        [Fact]
+        public void GetEnvironmentDataIncludesEnvironmentName()
+        {
+            var envName = "TEST";
+            var hostingEnv = Mock.Of<IHostingEnvironment>();
+            hostingEnv.EnvironmentName = envName;
+            var firstProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
+            {
+                { "test", "test" }
+            };
+
+            var secondProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
+            {
+                { "test2", "2" },
+                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" }
+            };
+
+            var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
+            {
+               firstProvider,
+               secondProvider
+            });
+
+
+            var sut = new EnvironmentProvider(configurationRoot, hostingEnv);
+
+            var data = sut.GetEnvironmentData();
+            data.activeProfiles.Should().Contain(envName);
+        }
+    
     }
 }
