@@ -6,5 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Nactuator\Nactuator.csproj" />
+  </ItemGroup>
+
 
 </Project>

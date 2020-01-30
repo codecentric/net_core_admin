@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace Nactuator
 {
-    public class EnvironmentProvider
+    public class EnvironmentProvider : IEnvironmentProvider
     {
         private readonly IConfiguration configuration;
-        private readonly IHostingEnvironment hostingEnvironment;
+        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public EnvironmentProvider(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public EnvironmentProvider(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             this.configuration = configuration;
             this.hostingEnvironment = hostingEnvironment;
@@ -24,10 +24,10 @@ namespace Nactuator
 
         public IReadOnlyCollection<PropertySources> ReadConfiguration()
         {
-          
+
             var providers = ((ConfigurationRoot)configuration).Providers.ToList();
             var sources = new List<PropertySources>();
-                    
+
             foreach (var provider in providers)
             {
                 var keys = GetFullKeyNames(provider, null!, new HashSet<string>());
@@ -58,10 +58,11 @@ namespace Nactuator
 
         private static string GetProviderName(IConfigurationProvider provider, IEnumerable<string> names, int postFix = 0)
         {
-           
-           var name = $"{ provider.GetType().Name} - {postFix}" ;
 
-            if (names.Contains(name)){
+            var name = $"{ provider.GetType().Name} - {postFix}";
+
+            if (names.Contains(name))
+            {
                 name = GetProviderName(provider, names, postFix += 1);
             }
 
@@ -69,7 +70,7 @@ namespace Nactuator
 
         }
 
-        public HashSet<string> GetFullKeyNames(IConfigurationProvider provider, string rootKey, HashSet<string> initialKeys)
+        private HashSet<string> GetFullKeyNames(IConfigurationProvider provider, string rootKey, HashSet<string> initialKeys)
         {
             foreach (var key in provider.GetChildKeys(Enumerable.Empty<string>(), rootKey))
             {

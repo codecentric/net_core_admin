@@ -76,7 +76,7 @@ namespace NactuatorTest
         public void GetEnvironmentDataIncludesEnvironmentName()
         {
             var envName = "TEST";
-            var hostingEnv = Mock.Of<IHostingEnvironment>();
+            var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.EnvironmentName = envName;
             var firstProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
