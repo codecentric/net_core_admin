@@ -12,7 +12,7 @@ namespace Nactuator
         {
             _httpContextAccessor = contextAccessor;
         }
-        private IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private HttpContext Current => _httpContextAccessor.HttpContext;
 

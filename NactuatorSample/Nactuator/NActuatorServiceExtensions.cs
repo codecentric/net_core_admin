@@ -16,6 +16,7 @@ namespace Nactuator
             var assembly = Assembly.GetAssembly(typeof(ActuatorController));
 
             services.AddHttpContextAccessor();
+            services.AddSingleton<IAdministrationBuilder, AdministrationBuilder>();
             services.AddSingleton<IBaseUrlProvider, BaseUrlProvider>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
 

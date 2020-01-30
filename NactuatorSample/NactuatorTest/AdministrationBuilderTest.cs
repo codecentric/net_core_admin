@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NactuatorTest
 {
-    public class SpringBootClientTest
+    public class AdministrationBuilderTest
     {
         [Fact]
         public void CreateApplicationSetsNameLikeSBA()
@@ -18,7 +18,7 @@ namespace NactuatorTest
             var provider = new Mock<IBaseUrlProvider>();
             provider.Setup(x => x.AppBaseUrl).Returns("http://example.com");
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>());
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>());
             var app = sbc.CreateApplication();
             app.Name.Should().Equals("appName");
         }
@@ -32,7 +32,7 @@ namespace NactuatorTest
             var provider = new Mock<IBaseUrlProvider>();
             provider.Setup(x => x.AppBaseUrl).Returns("http://example.com");
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>());
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>());
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals("http://example.com/actuator");
             provider.Verify(x => x.AppBaseUrl, Times.Once);
@@ -47,7 +47,7 @@ namespace NactuatorTest
             var provider = new Mock<IBaseUrlProvider>();
             provider.Setup(x => x.AppBaseUrl).Returns("http://example.com");
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>());
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>());
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals("http://example.com/");
             provider.Verify(x => x.AppBaseUrl, Times.Once);
@@ -68,7 +68,7 @@ namespace NactuatorTest
                 {"test", "value" }
             });
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>() {mdp.Object });
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() {mdp.Object });
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -96,7 +96,7 @@ namespace NactuatorTest
                 {"test2", "value2" }
             });
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object });
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object });
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -126,7 +126,7 @@ namespace NactuatorTest
                 {"test", "value2" }
             });
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object });
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object });
 
             sbc.Invoking(x => x.CreateApplication())
                 .Should()
@@ -142,7 +142,7 @@ namespace NactuatorTest
             var provider = new Mock<IBaseUrlProvider>();
             provider.Setup(x => x.AppBaseUrl).Returns("http://example.com");
 
-            var sbc = new SpringBootClient(hostingEnv, provider.Object, new List<IMetadataProvider>());
+            var sbc = new AdministrationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>());
             var app = sbc.CreateApplication();
             app.HealthUrl.Should().Equals("http://example.com/actuator/health");
             provider.Verify(x => x.AppBaseUrl, Times.Once);

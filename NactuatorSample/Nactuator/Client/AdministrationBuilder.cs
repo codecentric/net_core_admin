@@ -6,21 +6,16 @@ using System.Threading.Tasks;
 
 namespace Nactuator
 {
-    public class SpringBootClient
+    public class AdministrationBuilder : IAdministrationBuilder
     {
+        // todo make configurable, both from appsettings and code
+        // todo health url should be integrated with the healthcheck package
+
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly string baseUrl;
 
-        // todo create application
-        // todo post to SBA
-        // todo make configurable
-        // todo retry
-        // todo deregister
-
-        // todo health url should be integrated with the healthcheck package
-
-        public SpringBootClient(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders)
+        public AdministrationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders)
         {
             this.environment = environment;
             this.metadataProviders = metadataProviders;
@@ -32,8 +27,10 @@ namespace Nactuator
         /// https://github.com/codecentric/spring-boot-admin/blob/master/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/registration/DefaultApplicationFactory.java
         /// </summary>
         /// <returns></returns>
-        public Application CreateApplication() {
-            return new Application() {
+        public Application CreateApplication()
+        {
+            return new Application()
+            {
                 Name = environment.ApplicationName,
                 ManagementUrl = GetManagementUrl(),
                 ServiceUrl = GetServiceUrl(),
@@ -62,7 +59,7 @@ namespace Nactuator
             {
                 throw new DuplicateKeyException("Metadata cannot contain duplicate keys" + e.Message, e);
             }
-   
+
         }
 
         /// <summary>
@@ -77,11 +74,6 @@ namespace Nactuator
         private string GetManagementUrl()
         {
             return baseUrl + "/actuator"; // todo make both configurable!
-        }
-
-        public string Register()
-        {
-            return "";
         }
     }
 }
