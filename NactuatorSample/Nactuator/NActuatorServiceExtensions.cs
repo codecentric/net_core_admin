@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,14 @@ namespace Nactuator
         {
             var assembly = Assembly.GetAssembly(typeof(ActuatorController));
 
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IBaseUrlProvider, BaseUrlProvider>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
 
             services.AddControllers()
                 .PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
         }
+
+       
     }
 }

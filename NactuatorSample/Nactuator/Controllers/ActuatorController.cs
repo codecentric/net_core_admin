@@ -28,7 +28,14 @@ namespace Nactuator
             return result;
         }
 
-        // todo single property
+        [HttpGet("health")]
+        public async Task<ActionResult<EnvironmentData>> GetHealthAsync()
+        {
+
+            return new OkResult(); // todo make this better
+        }
+
+        // todo environment single property
 
     }
 }
