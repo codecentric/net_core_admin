@@ -2,11 +2,20 @@
 
 namespace Nactuator
 {
+    /// <summary>
+    /// see https://docs.spring.io/spring-boot/docs/2.2.2.RELEASE/actuator-api/html/#env for format and doc
+    /// </summary>
     public class EnvironmentData
     {
-        public IReadOnlyList<string> activeProfiles { get; set; }
+        public EnvironmentData(IReadOnlyList<string> activeProfiles, IReadOnlyCollection<PropertySources> propertySources)
+        {
+            this.activeProfiles = activeProfiles;
+            this.propertySources = propertySources;
+        }
 
-        public IReadOnlyCollection<PropertySources> propertySources { get; set; }
+        public IReadOnlyList<string> activeProfiles { get;  }
+
+        public IReadOnlyCollection<PropertySources> propertySources { get;}
 
         public override string ToString()
         {

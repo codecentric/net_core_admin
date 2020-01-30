@@ -34,10 +34,10 @@ namespace NactuatorTest
             firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
             firstResult.Properties.Should().HaveCount(2);
             firstResult.Properties.Keys.Should().Contain("test2");
-            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue() { Value = "2" });
+            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("2"));
 
             firstResult.Properties.Keys.Should().Contain("Logging:LogLevel:Microsoft.Hosting.Lifetime");
-            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue() { Value = "3" });
+            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("3") );
         }
 
         [Fact]

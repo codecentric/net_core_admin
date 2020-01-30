@@ -19,10 +19,7 @@ namespace Nactuator
 
         public EnvironmentData GetEnvironmentData()
         {
-            return new EnvironmentData() { 
-                activeProfiles = new List<string>() { hostingEnvironment.EnvironmentName},
-                propertySources = ReadConfiguration()
-            };
+            return new EnvironmentData(new List<string>() { hostingEnvironment.EnvironmentName }, ReadConfiguration());
         }
 
         public IReadOnlyCollection<PropertySources> ReadConfiguration()
@@ -33,7 +30,7 @@ namespace Nactuator
                     
             foreach (var provider in providers)
             {
-                var keys = GetFullKeyNames(provider, null, new HashSet<string>());
+                var keys = GetFullKeyNames(provider, null!, new HashSet<string>());
 
                 var data = new Dictionary<string, PropertyValue>();
 
@@ -48,20 +45,10 @@ namespace Nactuator
                         throw new Exception($"Could not ready key {key} from provider {providerName}");
                     }
 
-                    data.Add(key, new PropertyValue()
-                    {
-                        Value = value
-                    });
+                    data.Add(key, new PropertyValue(value));
                 }
 
-                var source = new PropertySources
-                {
-                    Name = providerName,
-                    Properties = data
-                };
-
-
-
+                var source = new PropertySources(providerName, data);
 
                 sources.Add(source);
             }
