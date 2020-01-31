@@ -17,7 +17,14 @@ namespace Nactuator
             this.environmentProvider = environmentProvider;
         }
 
-        [HttpGet("environment")]
+        [HttpOptions("env")]
+        public ActionResult OptionsEnvironment()
+        {
+            
+            return new OkResult();
+        }
+
+        [HttpGet("env")]
         public async Task<ActionResult<EnvironmentData>> GetEnvironmentAsync()
         {
             var data = environmentProvider.GetEnvironmentData();

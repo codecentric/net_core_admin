@@ -16,7 +16,7 @@ namespace Nactuator
 
         private HttpContext Current => _httpContextAccessor.HttpContext;
 
-        public string AppBaseUrl => $"{Current.Request.Scheme}://{Current.Request.Host}{Current.Request.PathBase}";
-
+        // public string AppBaseUrl => $"{Current.Request.Scheme}://{Current.Request.Host}{Current.Request.PathBase}";
+        public string AppBaseUrl => "https://localhost:5001";
     }
 }

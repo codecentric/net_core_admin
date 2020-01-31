@@ -20,6 +20,7 @@ namespace Nactuator
             this.environment = environment;
             this.metadataProviders = metadataProviders;
             baseUrl = baseUrlProvider.AppBaseUrl;
+            baseUrl = "http://host.docker.internal:5000";
         }
 
         /// <summary>

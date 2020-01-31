@@ -16,9 +16,11 @@ namespace Nactuator
             var assembly = Assembly.GetAssembly(typeof(ActuatorController));
 
             services.AddHttpContextAccessor();
+            services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IAdministrationBuilder, AdministrationBuilder>();
             services.AddSingleton<IBaseUrlProvider, BaseUrlProvider>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
+            services.AddHostedService<SpringBootClient>();
 
             services.AddControllers()
                 .PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
