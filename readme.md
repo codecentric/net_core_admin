@@ -34,10 +34,17 @@ Note that host.docker.internal is required on Windows hosts, otherwise it should
 ## Issues
 Note that a lot of endpoints are exposed at /actuator/* - always secure them otherwise sensitive data WILL leak!.
 
+## Health
+
+Per default, we respond with an "OK" Health result.
+You can customize this using Health Checks: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.1
+
+Please note that we use an internal Health check url, not the one configured by HealthCheck - you can override that by setting the HealthCheck URL configuration explicitly
+
 ## Todo
 1. Add more endpoints
-1. Health Checks
 1. Doku
 1. Auth
 1. Deregister
 1. Get Config Validation working
+1. Single-Property and EDIT for Env

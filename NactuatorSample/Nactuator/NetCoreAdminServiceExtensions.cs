@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nactuator.Client;
+using NetCoreAdmin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,7 @@ namespace Nactuator
                 configure?.Invoke(x);
             });
 
+            services.AddSingleton<IHealth, Health>();
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();

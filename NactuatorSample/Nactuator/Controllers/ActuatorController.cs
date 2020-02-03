@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NetCoreAdmin;
 using System.Threading.Tasks;
 
 namespace Nactuator
@@ -10,11 +11,13 @@ namespace Nactuator
     {
         private readonly ILogger<ActuatorController> logger;
         private readonly IEnvironmentProvider environmentProvider;
+        private readonly IHealth health;
 
-        public ActuatorController(ILogger<ActuatorController> logger, IEnvironmentProvider environmentProvider)
+        public ActuatorController(ILogger<ActuatorController> logger, IEnvironmentProvider environmentProvider, IHealth health)
         {
             this.logger = logger;
             this.environmentProvider = environmentProvider;
+            this.health = health;
         }
 
         [HttpOptions("env")]
@@ -25,7 +28,7 @@ namespace Nactuator
         }
 
         [HttpGet("env")]
-        public async Task<ActionResult<EnvironmentData>> GetEnvironmentAsync()
+        public ActionResult<EnvironmentData> GetEnvironment()
         {
             var data = environmentProvider.GetEnvironmentData();
             var result = new JsonResult(data)
@@ -38,8 +41,14 @@ namespace Nactuator
         [HttpGet("health")]
         public async Task<ActionResult<EnvironmentData>> GetHealthAsync()
         {
-
-            return new OkResult(); // todo make this better
+            if (await health.GetHealthAsync().ConfigureAwait(false))
+            {
+                return new OkResult();
+            }
+            else
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         // todo environment single property
