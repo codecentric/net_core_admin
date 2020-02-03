@@ -21,6 +21,6 @@ namespace Nactuator
 
         public Uri ServiceUrl { get; set; } = default!;
 
-        public IReadOnlyDictionary<string, string> Metadata { get; set; } = default!;
+        public IReadOnlyDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
     }
 }

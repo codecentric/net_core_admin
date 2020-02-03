@@ -1,5 +1,6 @@
 ﻿using Flurl;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace Nactuator
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly Uri baseUrl;
+        private readonly SpringBootConfig config;
 
-        public ApplicationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders)
+        public ApplicationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders, IOptionsMonitor<SpringBootConfig> optionsAccessor)
         {
             this.environment = environment;
             this.metadataProviders = metadataProviders;
@@ -24,7 +26,12 @@ namespace Nactuator
                 throw new ArgumentNullException(nameof(baseUrlProvider));
             }
             baseUrl = baseUrlProvider.AppBaseUrl;
-            //      baseUrl = "http://host.docker.internal:5000";
+
+            if (optionsAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(optionsAccessor));
+            }
+            config = optionsAccessor.CurrentValue;
         }
 
         /// <summary>
@@ -34,14 +41,31 @@ namespace Nactuator
         /// <returns></returns>
         public virtual Application CreateApplication()
         {
-            return new Application()
+            var application = config.Application;
+
+            if (string.IsNullOrWhiteSpace(application.Name))
             {
-                Name = environment.ApplicationName,
-                ManagementUrl = GetManagementUrl(),
-                ServiceUrl = GetServiceUrl(),
-                Metadata = GetMetadata(),
-                HealthUrl = GetHealthUrl()
-            };
+                application.Name = environment.ApplicationName;
+            }
+
+            if (application.ManagementUrl == null)
+            {
+                application.ManagementUrl = GetManagementUrl();
+            }
+
+            if (application.ServiceUrl == null)
+            {
+                application.ServiceUrl = GetServiceUrl();
+            }
+
+            if (application.HealthUrl == null)
+            {
+                application.HealthUrl = GetHealthUrl();
+            }
+
+            application.Metadata = GetMetadata();
+
+            return application;
         }
 
         private Uri GetHealthUrl()
@@ -51,13 +75,18 @@ namespace Nactuator
 
         private IReadOnlyDictionary<string, string> GetMetadata()
         {
-
             try
             {
                 var data = metadataProviders
                             .Select(x => x.GetMetadata())
                             .SelectMany(dict => dict.ToList())
                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                foreach (var kvp in config.Application.Metadata)
+                {
+                    data.Add(kvp.Key, kvp.Value);
+                }
+
                 return data;
             }
             catch (ArgumentException e)
