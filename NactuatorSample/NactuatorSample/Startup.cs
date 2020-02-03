@@ -23,7 +23,7 @@ namespace NactuatorSample
             services.AddControllers();
             services.AddNactuator(Configuration, x => {
                 Console.WriteLine(x);
-                x.RetryTimeout = TimeSpan.FromSeconds(99);
+               // x.RetryTimeout = TimeSpan.FromSeconds(99);
             });
         }
 

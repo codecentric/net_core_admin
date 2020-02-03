@@ -78,7 +78,7 @@ namespace NactuatorTest
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new CancellationToken());
+            await sbc.StartAsync(new System.Threading.CancellationToken());
             await Task.Delay(11);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.AtLeast(2));
         }
@@ -103,7 +103,7 @@ namespace NactuatorTest
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new CancellationToken());
+            await sbc.StartAsync(new System.Threading.CancellationToken());
             await Task.Delay(11);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.Exactly(1));
         }
@@ -128,9 +128,9 @@ namespace NactuatorTest
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
             // the token passed to startasync is not the one used by ExecuteAsync (https://github.com/dotnet/extensions/issues/1245)
-            await sbc.StartAsync(new CancellationToken());
+            await sbc.StartAsync(new System.Threading.CancellationToken());
             await Task.Delay(11);
-            await sbc.StopAsync(new CancellationToken());
+            await sbc.StopAsync(new System.Threading.CancellationToken());
             sbc.Registering.Should().BeFalse();
         }
     }
