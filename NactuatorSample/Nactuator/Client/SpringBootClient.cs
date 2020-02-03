@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nactuator.Client;
 using System;
@@ -9,15 +10,16 @@ namespace Nactuator
 {
     public class SpringBootClient : BackgroundService, ISpringBootClient
     {
+        private readonly ILogger<SpringBootClient> logger;
         private readonly IApplicationBuilder applicationBuilder;
         private readonly ISpringBootAdminRESTAPI restApi;
         private readonly SpringBootConfig config;
 
-        // todo retry
-        // todo deregister
+        public bool Registering { get; set; } = false;
 
-        public SpringBootClient(IApplicationBuilder applicationBuilder, IOptionsMonitor<SpringBootConfig> optionsAccessor, ISpringBootAdminRESTAPI restApi)
+        public SpringBootClient(ILogger<SpringBootClient> logger, IApplicationBuilder applicationBuilder, IOptionsMonitor<SpringBootConfig> optionsAccessor, ISpringBootAdminRESTAPI restApi)
         {
+            this.logger = logger;
             this.applicationBuilder = applicationBuilder;
             this.restApi = restApi;
             if (optionsAccessor == null)
@@ -38,7 +40,31 @@ namespace Nactuator
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await RegisterAsync().ConfigureAwait(false);
+            while (true)
+            {
+                if (stoppingToken.IsCancellationRequested)
+                {
+                    // todo deregister
+                    Registering = false;
+                    break;
+                }
+
+                Registering = true;
+                try
+                {
+                     await RegisterAsync().ConfigureAwait(false);
+                    break;
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
+                {
+                    logger.LogError("Could not connect to Spring Boot Admin Server", e);
+                    
+                }
+
+                await Task.Delay(config.RetryTimeout).ConfigureAwait(false);
+            }
         }
     }
 }

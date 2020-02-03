@@ -10,6 +10,11 @@ namespace Nactuator
         public Uri SpringBootServerUrl { get; set; } = null!;
 
         /// <summary>
+        /// How long do we wait between attempts to contact the Spring Boot Admin Server? Can be TimeSpan Syntax, see https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-timespan-format-strings
+        /// </summary>
+        public TimeSpan RetryTimeout { get; set; } = TimeSpan.FromMinutes(1);
+
+        /// <summary>
         /// Configuration how this Application should register itself
         /// </summary>
         public Application Application { get; set; } = null!;

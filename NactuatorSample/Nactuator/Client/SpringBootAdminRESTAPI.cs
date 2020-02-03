@@ -24,13 +24,13 @@ namespace Nactuator.Client
             using var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
             var result = await httpClient.PostAsync(url, stringContent).ConfigureAwait(false);
 
-            result.EnsureSuccessStatusCode(); // todo retry logic or at least do not fail
+            result.EnsureSuccessStatusCode();
             var responseContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var springResponse = JsonSerializer.Deserialize<SpringBootRegisterResponse>(responseContent, new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
-            }); // todo this would be more efficient using the newer methids
+            });
 
             return springResponse;
         }
