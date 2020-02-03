@@ -17,6 +17,6 @@ namespace Nactuator
         /// <summary>
         /// Configuration how this Application should register itself
         /// </summary>
-        public Application Application { get; set; } = null!;
+        public Application Application { get; set; } = new Application();
     }
 }

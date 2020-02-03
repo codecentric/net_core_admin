@@ -52,6 +52,7 @@ namespace Nactuator
                 Registering = true;
                 try
                 {
+                    logger.LogDebug("Registering for Spring Boot Admin.");
                      await RegisterAsync().ConfigureAwait(false);
                     break;
                 }
@@ -59,7 +60,7 @@ namespace Nactuator
                 catch (Exception e)
 #pragma warning restore CA1031 // Do not catch general exception types
                 {
-                    logger.LogError("Could not connect to Spring Boot Admin Server", e);
+                    logger.LogError("Could not connect to Spring Boot Admin Server. Will retry in {timespan}", config.RetryTimeout, e);
                     
                 }
 

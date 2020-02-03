@@ -2,16 +2,22 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nactuator.Client;
+using System;
 using System.Reflection;
 
 namespace Nactuator
 {
     public static class NActuatorServiceExtensions
     {
-        public static void AddNactuator(this IServiceCollection services, IConfiguration configuration)
+        public static void AddNactuator(this IServiceCollection services, IConfiguration configuration, Action<SpringBootConfig> configure = null!)
         {
             var assembly = Assembly.GetAssembly(typeof(ActuatorController));
-            services.Configure<SpringBootConfig>(configuration.GetSection("NetCoreAdmin")); // todo validate!
+
+            services.Configure<SpringBootConfig>(x => {
+                configuration.GetSection("NetCoreAdmin").Bind(x);
+                configure?.Invoke(x);
+            }); // todo validate!
+
             services.AddHttpContextAccessor();
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
