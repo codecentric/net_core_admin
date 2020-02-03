@@ -1,26 +1,30 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Flurl;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nactuator
 {
-    public class AdministrationBuilder : IAdministrationBuilder
+    public class ApplicationBuilder : IApplicationBuilder
     {
         // todo make configurable, both from appsettings and code
         // todo health url should be integrated with the healthcheck package
 
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
-        private readonly string baseUrl;
+        private readonly Uri baseUrl;
 
-        public AdministrationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders)
+        public ApplicationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders)
         {
             this.environment = environment;
             this.metadataProviders = metadataProviders;
+            if (baseUrlProvider == null)
+            {
+                throw new ArgumentNullException(nameof(baseUrlProvider));
+            }
             baseUrl = baseUrlProvider.AppBaseUrl;
-            baseUrl = "http://host.docker.internal:5000";
+            //      baseUrl = "http://host.docker.internal:5000";
         }
 
         /// <summary>
@@ -28,7 +32,7 @@ namespace Nactuator
         /// https://github.com/codecentric/spring-boot-admin/blob/master/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/registration/DefaultApplicationFactory.java
         /// </summary>
         /// <returns></returns>
-        public Application CreateApplication()
+        public virtual Application CreateApplication()
         {
             return new Application()
             {
@@ -40,9 +44,9 @@ namespace Nactuator
             };
         }
 
-        private string GetHealthUrl()
+        private Uri GetHealthUrl()
         {
-            return GetManagementUrl() + "/health";
+            return new Uri(Url.Combine(GetManagementUrl().ToString(), "/health"));
         }
 
         private IReadOnlyDictionary<string, string> GetMetadata()
@@ -67,14 +71,15 @@ namespace Nactuator
         /// I am not sure if this is sufficient - but for now lets be service and management base url be the same
         /// </summary>
         /// <returns></returns>
-        private string GetServiceUrl()
+        private Uri GetServiceUrl()
         {
-            return $"{baseUrl}/";
+            return new Uri($"{baseUrl}/");
         }
 
-        private string GetManagementUrl()
+        private Uri GetManagementUrl()
         {
-            return baseUrl + "/actuator"; // todo make both configurable!
+
+            return new Uri(Url.Combine(baseUrl.ToString(), "/actuator")); // todo make both configurable!
         }
     }
 }

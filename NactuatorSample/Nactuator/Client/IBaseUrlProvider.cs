@@ -1,7 +1,9 @@
-﻿namespace Nactuator
+﻿using System;
+
+namespace Nactuator
 {
     public interface IBaseUrlProvider
     {
-        string AppBaseUrl { get; }
+        Uri AppBaseUrl { get; }
     }
 }

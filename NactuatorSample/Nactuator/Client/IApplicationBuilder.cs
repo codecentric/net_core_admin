@@ -1,6 +1,6 @@
 ﻿namespace Nactuator
 {
-    public interface IAdministrationBuilder
+    public interface IApplicationBuilder
     {
         Application CreateApplication();
     }

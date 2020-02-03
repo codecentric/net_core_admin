@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Nactuator.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,42 +9,36 @@ namespace Nactuator
 {
     public class SpringBootClient : BackgroundService, ISpringBootClient
     {
-        private readonly IAdministrationBuilder administrationBuilder;
-        private readonly HttpClient httpClient;
+        private readonly IApplicationBuilder applicationBuilder;
+        private readonly ISpringBootAdminRESTAPI restApi;
+        private readonly SpringBootConfig config;
 
-        // todo post to SBA
         // todo retry
         // todo deregister
 
-        public SpringBootClient(IAdministrationBuilder administrationBuilder)
+        public SpringBootClient(IApplicationBuilder applicationBuilder, IOptionsMonitor<SpringBootConfig> optionsAccessor, ISpringBootAdminRESTAPI restApi)
         {
-            this.administrationBuilder = administrationBuilder;
-            this.httpClient = new HttpClient();
-        }
-
-
-        public async Task<string> RegisterAsync(string springBootAdminUrl)
-        {
-            var app = administrationBuilder.CreateApplication();
-            var content = JsonSerializer.Serialize(app, new JsonSerializerOptions() { 
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
-            var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
-            var result = await httpClient.PostAsync("http://localhost:1111/instances", stringContent); // todo pull from config
-            result.EnsureSuccessStatusCode(); // todo retry logic or at least do not fail
-
-            var springResponse = JsonSerializer.Deserialize<SpringBootRegisterResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions()
+            this.applicationBuilder = applicationBuilder;
+            this.restApi = restApi;
+            if (optionsAccessor == null)
             {
-                PropertyNameCaseInsensitive = true
-            }); // todo this would be more efficient using the newer methids
-
-            return springResponse.Id;
+                throw new ArgumentNullException(nameof(optionsAccessor));
+            }
+            config = optionsAccessor.CurrentValue;
         }
 
-   
+
+        public async Task<string> RegisterAsync()
+        {
+            // most of httpClient is externalized to a different Service due to the difficulty of testing httpClient.
+            var response = await restApi.PostAsync(applicationBuilder.CreateApplication(), config.SpringBootServerUrl).ConfigureAwait(false);
+            return response.Id;
+        }
+
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-           await RegisterAsync("");
+            await RegisterAsync().ConfigureAwait(false);
         }
     }
 }

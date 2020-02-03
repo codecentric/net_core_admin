@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nactuator
 {
@@ -17,6 +14,6 @@ namespace Nactuator
         private HttpContext Current => _httpContextAccessor.HttpContext;
 
         // public string AppBaseUrl => $"{Current.Request.Scheme}://{Current.Request.Host}{Current.Request.PathBase}";
-        public string AppBaseUrl => "https://localhost:5001";
+        public Uri AppBaseUrl => new Uri("https://localhost:5001");
     }
 }

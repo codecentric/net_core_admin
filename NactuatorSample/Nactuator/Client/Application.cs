@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Nactuator
 {
@@ -10,14 +11,16 @@ namespace Nactuator
         /// <summary>
         /// Name to register with. Defaults to IWebHostEnvironment.ApplicationName
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
 	    /// Client-health-URL to register with. Inferred at runtime, can be overridden in case
 	    /// the reachable URL is different (e.g. Docker). Must be unique all services registry.
-        public string HealthUrl { get; set; } // todo implement
-        public string ManagementUrl { get; set; }
-        public string ServiceUrl { get; set; }
+        public Uri HealthUrl { get; set; } = default!; // todo implement
 
-        public IReadOnlyDictionary<string, string> Metadata { get; set; }
+        public Uri ManagementUrl { get; set; } = default!;
+
+        public Uri ServiceUrl { get; set; } = default!;
+
+        public IReadOnlyDictionary<string, string> Metadata { get; set; } = default!;
     }
 }
