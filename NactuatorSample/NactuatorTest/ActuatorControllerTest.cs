@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Nactuator;
 using NetCoreAdmin;
+using NetCoreAdmin.Health;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace NactuatorTest
     {
 
         [Fact]
-        public void GetEnvironment_uses_environmentProvider()
+        public void GetEnvironmentUsesEnvironmentProvider()
         {
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
             mockEnvProvider.Setup(x => x.GetEnvironmentData()).Returns(new EnvironmentData(new List<string>() {"env" }, new List<PropertySources>()));
@@ -28,7 +29,7 @@ namespace NactuatorTest
         }
 
         [Fact]
-        public void GetEnvironment_returns_environmentProvider()
+        public void GetEnvironmentReturnsEnvironmentProvider()
         {
             const string Expected = "env";
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
@@ -42,7 +43,7 @@ namespace NactuatorTest
         }
 
         [Fact]
-        public void GetEnvironment_sets_correct_Response_Type()
+        public void GetEnvironmentSetsCorrectResponseType()
         {
             const string Expected = "env";
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
@@ -59,36 +60,31 @@ namespace NactuatorTest
         [Fact]
         public async Task GetHealthReturnsResultOfIHealth()
         {
-            var healthMock = new Mock<IHealth>();
-            healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<(bool, IEnumerable<string>)>(
-                (true, new List<string>() { "OK!"})
-                ).AsTask());
+            var healthMock = new Mock<IHealthProvider>();
+            healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<HealthData>(
+                new HealthData() {Status="Healthy" }).AsTask());
 
             var controller = new ActuatorController(null, null, healthMock.Object);
 
             var result = await controller.GetHealthAsync().ConfigureAwait(false);
             var resultData = result.Result.As<OkObjectResult>();
             resultData.StatusCode.Should().Equals(200);
-            ((List<string>)resultData.Value).Should().HaveCount(1);
-            ((List<string>)resultData.Value).Should().Contain("OK!");
+            ((HealthData)resultData.Value).Status.Should().Equals("Healthy");
         }
 
         [Fact]
         public async Task GetHealthReturnsResultOfIHealthError()
         {
-            const string Expected = "env";
-            var healthMock = new Mock<IHealth>();
-            healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<(bool, IEnumerable<string>)>(
-                (false, new List<string>() { "OK!" })
-                ).AsTask());
+            var healthMock = new Mock<IHealthProvider>();
+            healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<HealthData>(
+                new HealthData() { Status = "Unhealthy" }).AsTask());
 
             var controller = new ActuatorController(null, null, healthMock.Object);
 
             var result = await controller.GetHealthAsync().ConfigureAwait(false);
             var resultData = result.Result.As<ObjectResult>();
-            resultData.StatusCode.Should().Equals(500);
-            ((List<string>)resultData.Value).Should().HaveCount(1);
-            ((List<string>)resultData.Value).Should().Contain("OK!");
+            resultData.StatusCode.Should().Equals(200);
+            ((HealthData)resultData.Value).Status.Should().Equals("Unhealthy");
         }
     }
 }

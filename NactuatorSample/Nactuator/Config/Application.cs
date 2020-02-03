@@ -16,10 +16,6 @@ namespace Nactuator
         [MinLength(1)]
         public string Name { get; set; } = default!;
 
-	    /// Client-health-URL to register with. Inferred at runtime, can be overridden in case
-	    /// the reachable URL is different (e.g. Docker). Must be unique all services registry.
-        public Uri HealthUrl { get; set; } = default!;
-
         /// <summary>
         /// URL of the management Endpoints. If empty, defaults to ServiceUrl/actuator
         /// </summary>

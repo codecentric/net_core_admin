@@ -21,7 +21,7 @@ namespace Nactuator
                 configure?.Invoke(x);
             });
 
-            services.AddSingleton<IHealth, Health>();
+            services.AddSingleton<IHealthProvider, HealthProvider>();
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();

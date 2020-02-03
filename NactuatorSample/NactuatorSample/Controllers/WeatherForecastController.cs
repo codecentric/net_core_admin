@@ -23,6 +23,7 @@ namespace NactuatorSample.Controllers
         }
 
         [HttpGet]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();

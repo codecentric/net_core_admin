@@ -39,7 +39,7 @@ Note that a lot of endpoints are exposed at /actuator/* - always secure them oth
 Per default, we respond with an "OK" Health result.
 You can customize this using Health Checks: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.1
 
-Please note that we use an internal Health check url, not the one configured by HealthCheck - you can override that by setting the HealthCheck URL configuration explicitly
+Please note that we use an internal Health check url, not the one configured by HealthCheck due to the need to conforms to Actuators Data format.
 
 ## Todo
 1. Add more endpoints

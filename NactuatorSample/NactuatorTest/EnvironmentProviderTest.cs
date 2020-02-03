@@ -16,16 +16,15 @@ namespace NactuatorTest
         public void ReadsConfigurationFromIConfiguration()
         {
             var provider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
-            { 
+            {
                 { "test2", "2" },
                 { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "3" }
             };
 
-            var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
+            using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
                provider
             });
-
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
@@ -37,7 +36,7 @@ namespace NactuatorTest
             firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("2"));
 
             firstResult.Properties.Keys.Should().Contain("Logging:LogLevel:Microsoft.Hosting.Lifetime");
-            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("3") );
+            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("3"));
         }
 
         [Fact]
@@ -54,7 +53,7 @@ namespace NactuatorTest
                 { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" }
             };
 
-            var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
+            using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
                firstProvider,
                secondProvider
@@ -89,7 +88,7 @@ namespace NactuatorTest
                 { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" }
             };
 
-            var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
+            using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
                firstProvider,
                secondProvider

@@ -51,19 +51,9 @@ namespace Nactuator
                 application.ServiceUrl = GetServiceUrl();
             }
 
-            if (application.HealthUrl == null)
-            {
-                application.HealthUrl = GetHealthUrl();
-            }
-
             application.Metadata = GetMetadata();
 
             return application;
-        }
-
-        private Uri GetHealthUrl()
-        {
-            return new Uri(Url.Combine(GetManagementUrl().ToString(), "/health"));
         }
 
         private IReadOnlyDictionary<string, string> GetMetadata()

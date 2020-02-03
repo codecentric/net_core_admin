@@ -12,7 +12,7 @@ public class ExampleHealthCheck : IHealthCheck
         var rnd = new Random();
 
         var healthCheckResultHealthy = rnd.Next(2) == 0;
-
+       
         if (healthCheckResultHealthy)
         {
             return Task.FromResult(
