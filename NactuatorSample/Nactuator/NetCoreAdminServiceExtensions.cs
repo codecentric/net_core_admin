@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Nactuator
 {
-    public static class NActuatorServiceExtensions
+    public static class NetCoreAdminServiceExtensions
     {
         public static void AddNetCoreAdmin(this IServiceCollection services, IConfiguration configuration, Action<SpringBootConfig> configure = null!)
         {

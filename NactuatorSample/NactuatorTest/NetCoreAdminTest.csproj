@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nactuator\Nactuator.csproj" />
+    <ProjectReference Include="..\Nactuator\NetCoreAdmin.csproj" />
   </ItemGroup>
 
 </Project>
