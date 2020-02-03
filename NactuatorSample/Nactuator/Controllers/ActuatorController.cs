@@ -7,7 +7,7 @@ namespace Nactuator
 {
     [ApiController]
     [Route("[controller]")]
-    public class ActuatorController
+    public class ActuatorController : ControllerBase
     {
         private readonly ILogger<ActuatorController> logger;
         private readonly IEnvironmentProvider environmentProvider;
@@ -24,7 +24,7 @@ namespace Nactuator
         public ActionResult OptionsEnvironment()
         {
             
-            return new OkResult();
+            return Ok();
         }
 
         [HttpGet("env")]
@@ -41,13 +41,14 @@ namespace Nactuator
         [HttpGet("health")]
         public async Task<ActionResult<EnvironmentData>> GetHealthAsync()
         {
-            if (await health.GetHealthAsync().ConfigureAwait(false))
+            var (result, message) = await health.GetHealthAsync().ConfigureAwait(false);
+            if (result)
             {
-                return new OkResult();
+                return Ok(message);
             }
             else
             {
-                return new StatusCodeResult(500);
+                return StatusCode(500, message);
             }
         }
 

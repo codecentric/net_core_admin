@@ -20,7 +20,7 @@ namespace NetCoreAdminTest
         {
             var logger = new Mock<ILogger<Health>>();
             var sut = new Health(logger.Object);
-            var result = await sut.GetHealthAsync();
+            var (result, _) = await sut.GetHealthAsync().ConfigureAwait(false);
             result.Should().BeTrue();
         }
 
@@ -30,8 +30,19 @@ namespace NetCoreAdminTest
             var logger = new Mock<ILogger<Health>>();
 
             var sut = new Health(logger.Object, new HealthCheckServiceStub());
-            var result = await sut.GetHealthAsync();
+            var (result, _) = await sut.GetHealthAsync().ConfigureAwait(false);
             result.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ReturnsResultMessages()
+        {
+            var logger = new Mock<ILogger<Health>>();
+
+            var sut = new Health(logger.Object, new HealthCheckServiceStub());
+            var (result, messages) = await sut.GetHealthAsync().ConfigureAwait(false);
+            result.Should().BeTrue();
+            messages.Should().HaveCount(1);
         }
     }
 }

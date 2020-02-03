@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetCoreAdmin
 {
     public interface IHealth
     {
-        Task<bool> GetHealthAsync();
+        Task<(bool, IEnumerable<string>)> GetHealthAsync();
     }
 }

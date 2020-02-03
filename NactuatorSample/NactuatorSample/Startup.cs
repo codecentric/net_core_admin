@@ -21,6 +21,8 @@ namespace NactuatorSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddHealthChecks()
+                .AddCheck<ExampleHealthCheck>("example_health_check");
             services.AddNetCoreAdmin(Configuration, x => {
                 Console.WriteLine(x);
                // x.RetryTimeout = TimeSpan.FromSeconds(99);
@@ -43,6 +45,7 @@ namespace NactuatorSample
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
             });
         }
