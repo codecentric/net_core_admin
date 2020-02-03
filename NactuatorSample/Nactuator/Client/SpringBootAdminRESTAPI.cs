@@ -50,7 +50,7 @@ namespace Nactuator.Client
                 if (httpClient != null)
                 {
                     httpClient.Dispose();
-                    httpClient = null;
+                    httpClient = null!;
                 }
             }
         }

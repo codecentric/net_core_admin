@@ -81,7 +81,7 @@ namespace Nactuator
 
                 GetFullKeyNames(provider, surrogateKey, initialKeys);
 
-                if (!initialKeys.Any(k => k.StartsWith(surrogateKey)))
+                if (!initialKeys.Any(k => k.StartsWith(surrogateKey, StringComparison.InvariantCulture)))
                 {
                     initialKeys.Add(surrogateKey);
                 }
