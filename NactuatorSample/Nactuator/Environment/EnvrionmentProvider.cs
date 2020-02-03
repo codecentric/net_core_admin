@@ -35,7 +35,6 @@ namespace Nactuator
                 var data = new Dictionary<string, PropertyValue>();
 
                 var providerName = GetProviderName(provider, sources.Select(x => x.Name));
-                // todo handle multiple providers with same name
                 foreach (var key in keys)
                 {
                     var success = provider.TryGet(key, out var value);

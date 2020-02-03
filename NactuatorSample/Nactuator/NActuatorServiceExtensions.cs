@@ -11,7 +11,7 @@ namespace Nactuator
 {
     public static class NActuatorServiceExtensions
     {
-        public static void AddNactuator(this IServiceCollection services, IConfiguration configuration, Action<SpringBootConfig> configure = null!)
+        public static void AddNetCoreAdmin(this IServiceCollection services, IConfiguration configuration, Action<SpringBootConfig> configure = null!)
         {
             var assembly = Assembly.GetAssembly(typeof(ActuatorController));
 

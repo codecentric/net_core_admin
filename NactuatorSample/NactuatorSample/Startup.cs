@@ -21,7 +21,7 @@ namespace NactuatorSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddNactuator(Configuration, x => {
+            services.AddNetCoreAdmin(Configuration, x => {
                 Console.WriteLine(x);
                // x.RetryTimeout = TimeSpan.FromSeconds(99);
             });
