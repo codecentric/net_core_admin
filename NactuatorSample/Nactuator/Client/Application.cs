@@ -15,12 +15,22 @@ namespace Nactuator
 
 	    /// Client-health-URL to register with. Inferred at runtime, can be overridden in case
 	    /// the reachable URL is different (e.g. Docker). Must be unique all services registry.
-        public Uri HealthUrl { get; set; } = default!; // todo implement
+        public Uri HealthUrl { get; set; } = default!;
 
+        /// <summary>
+        /// URL of the management Endpoints. If empty, defaults to ServiceUrl/actuator
+        /// </summary>
         public Uri ManagementUrl { get; set; } = default!;
 
+        /// <summary>
+        /// Absolute base url of this Server, e.g. http//localhost:5000
+        /// Must not be Emoty
+        /// </summary>
         public Uri ServiceUrl { get; set; } = default!;
 
+        /// <summary>
+        /// Additional metadata. Can be supplied by Configuration and dedicated IMetadataProviders.
+        /// </summary>
         public IReadOnlyDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
     }
 }

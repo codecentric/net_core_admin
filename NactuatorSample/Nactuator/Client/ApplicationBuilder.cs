@@ -9,24 +9,17 @@ namespace Nactuator
 {
     public class ApplicationBuilder : IApplicationBuilder
     {
-        // todo make configurable, both from appsettings and code
         // todo health url should be integrated with the healthcheck package
 
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
-        private readonly Uri baseUrl;
         private readonly SpringBootConfig config;
 
-        public ApplicationBuilder(IWebHostEnvironment environment, IBaseUrlProvider baseUrlProvider, IEnumerable<IMetadataProvider> metadataProviders, IOptionsMonitor<SpringBootConfig> optionsAccessor)
+        public ApplicationBuilder(IWebHostEnvironment environment, IEnumerable<IMetadataProvider> metadataProviders, IOptionsMonitor<SpringBootConfig> optionsAccessor)
         {
             this.environment = environment;
             this.metadataProviders = metadataProviders;
-            if (baseUrlProvider == null)
-            {
-                throw new ArgumentNullException(nameof(baseUrlProvider));
-            }
-            baseUrl = baseUrlProvider.AppBaseUrl;
-
+  
             if (optionsAccessor == null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
@@ -96,19 +89,15 @@ namespace Nactuator
 
         }
 
-        /// <summary>
-        /// I am not sure if this is sufficient - but for now lets be service and management base url be the same
-        /// </summary>
-        /// <returns></returns>
         private Uri GetServiceUrl()
         {
-            return new Uri($"{baseUrl}/");
+            return config.Application.ServiceUrl;
         }
 
         private Uri GetManagementUrl()
         {
 
-            return new Uri(Url.Combine(baseUrl.ToString(), "/actuator")); // todo make both configurable!
+            return new Uri(Url.Combine(GetServiceUrl().ToString(), "/actuator")); 
         }
     }
 }

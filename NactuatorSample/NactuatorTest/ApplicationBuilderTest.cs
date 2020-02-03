@@ -16,14 +16,12 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.Name.Should().Equals("appName");
         }
@@ -34,17 +32,14 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals("http://example.com/actuator");
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
 
         [Fact]
@@ -53,19 +48,17 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             const string url = "http://example.com/another";
             config.Application.ManagementUrl = new System.Uri(url);
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals(url);
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
 
         [Fact]
@@ -74,17 +67,14 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv,  new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals("http://example.com/");
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
 
         [Fact]
@@ -93,19 +83,15 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
             const string url = "http://example.com/another";
             config.Application.ServiceUrl = new System.Uri(url);
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals(url);
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
 
         [Fact]
@@ -114,10 +100,8 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
@@ -127,7 +111,7 @@ namespace NactuatorTest
                 {"test", "value" }
             });
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() {mdp.Object }, acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() {mdp.Object }, acessor.Object);
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -140,10 +124,8 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             config.Application.Metadata = new Dictionary<string, string>() { { "unique", "value" } };
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
@@ -154,7 +136,7 @@ namespace NactuatorTest
                 {"test", "value" }
             });
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object }, acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() { mdp.Object }, acessor.Object);
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -169,9 +151,6 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
@@ -185,10 +164,11 @@ namespace NactuatorTest
             });
 
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object }, acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() { mdp.Object, mdp2.Object }, acessor.Object);
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -203,9 +183,6 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
@@ -219,10 +196,11 @@ namespace NactuatorTest
             });
 
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>() { mdp.Object, mdp2.Object }, acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() { mdp.Object, mdp2.Object }, acessor.Object);
 
             sbc.Invoking(x => x.CreateApplication())
                 .Should()
@@ -235,17 +213,14 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.HealthUrl.Should().Equals("http://example.com/actuator/health");
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
 
 
@@ -255,19 +230,16 @@ namespace NactuatorTest
             var hostingEnv = Mock.Of<IWebHostEnvironment>();
             hostingEnv.ApplicationName = "appName";
 
-            var provider = new Mock<IBaseUrlProvider>();
-            provider.Setup(x => x.AppBaseUrl).Returns(new System.Uri("http://example.com"));
-
             var config = new SpringBootConfig();
+            config.Application.ServiceUrl = new System.Uri("http://example.com");
             const string url = "http://example.com/another";
             config.Application.HealthUrl = new System.Uri(url);
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv, provider.Object, new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.HealthUrl.Should().Equals(url);
-            provider.Verify(x => x.AppBaseUrl, Times.Once);
         }
     }
 }

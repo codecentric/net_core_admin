@@ -18,10 +18,8 @@ namespace Nactuator
                 configure?.Invoke(x);
             }); // todo validate!
 
-            services.AddHttpContextAccessor();
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
-            services.AddSingleton<IBaseUrlProvider, BaseUrlProvider>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
             services.AddSingleton<ISpringBootAdminRESTAPI, SpringBootAdminRESTAPI>();
             services.AddHostedService<SpringBootClient>();
