@@ -11,29 +11,45 @@ namespace Nactuator
     public class SpringBootClient : BackgroundService, ISpringBootClient
     {
         private readonly ILogger<SpringBootClient> logger;
-        private readonly IApplicationBuilder applicationBuilder;
         private readonly ISpringBootAdminRESTAPI restApi;
         private readonly SpringBootConfig config;
+        private readonly Application app;
 
         public bool Registering { get; set; } = false;
 
         public SpringBootClient(ILogger<SpringBootClient> logger, IApplicationBuilder applicationBuilder, IOptionsMonitor<SpringBootConfig> optionsAccessor, ISpringBootAdminRESTAPI restApi)
         {
-            this.logger = logger;
-            this.applicationBuilder = applicationBuilder;
-            this.restApi = restApi;
-            if (optionsAccessor == null)
+            if (logger is null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (applicationBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(applicationBuilder));
+            }
+
+            if (optionsAccessor is null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
             }
+
+            if (restApi is null)
+            {
+                throw new ArgumentNullException(nameof(restApi));
+            }
+
+            this.logger = logger;
+            this.restApi = restApi;
             config = optionsAccessor.CurrentValue;
+            app = applicationBuilder.CreateApplication();
         }
 
 
         public async Task<string> RegisterAsync()
         {
             // most of httpClient is externalized to a different Service due to the difficulty of testing httpClient.
-            var response = await restApi.PostAsync(applicationBuilder.CreateApplication(), config.SpringBootServerUrl).ConfigureAwait(false);
+            var response = await restApi.PostAsync(app, config.SpringBootServerUrl).ConfigureAwait(false);
             return response.Id;
         }
 
@@ -60,7 +76,7 @@ namespace Nactuator
                 catch (Exception e)
 #pragma warning restore CA1031 // Do not catch general exception types
                 {
-                    logger.LogError("Could not connect to Spring Boot Admin Server. Will retry in {timespan}", config.RetryTimeout, e);
+                    logger.LogError(e, "Could not connect to Spring Boot Admin Server. Will retry in {timespan}", config.RetryTimeout);
                     
                 }
 

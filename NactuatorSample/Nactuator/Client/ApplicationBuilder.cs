@@ -14,6 +14,7 @@ namespace Nactuator
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly SpringBootConfig config;
+           
 
         public ApplicationBuilder(IWebHostEnvironment environment, IEnumerable<IMetadataProvider> metadataProviders, IOptionsMonitor<SpringBootConfig> optionsAccessor)
         {
