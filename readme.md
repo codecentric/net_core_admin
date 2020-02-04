@@ -6,16 +6,21 @@ This package adds the abillity to use Spring Boot Admin with a Asp.Net Core Serv
 
 1. Install Package
 1. Add in ConfigureServices:
+
 ```C#
 services.AddNetCoreAdmin(Configuration);
 ```
+
 1. Run Spring Boot Admin, e.g. in a Docker Container
+
 ```bash
 docker run -d -p 1111:1111 -e SPRING_BOOT_ADMIN_TITLE='SB Admin' -e SPRING_BOOT_ADMIN_SECURITY_ENABLED=false --name spring-boot-admin slydeveloper/spring-boot-admin:latest
 ```
 
 1. Configure your application so that in can talk to SBA:
+
 Configure in appsettings.json OR Code
+
 ```json
  "NetCoreAdmin": {
     "springBootServerUrl": "http://localhost:1111/instances",
@@ -48,12 +53,12 @@ This maps to the Services registered via ASP.NET Cores DI.
 The displayed NAME is the concrete type, e.g. a DataProvider
 The Alias contains the Type we registered for, e.g. IDataProvider.
 
-In case of Lists of objects, a " | <Number>" is appended, since Actuator does not know of this concept.
+In case of Lists of objects, a " | 1" is appended, since Actuator does not know of this concept.
 The Type might not be accurate, especially for Factories.
 Due to the DI limitations, it is not possible to show Dependencies.
 
-
 ## Todo
+
 1. Add more endpoints
 1. Doku
 1. Auth
