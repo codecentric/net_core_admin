@@ -57,6 +57,17 @@ In case of Lists of objects, a " | 1" is appended, since Actuator does not know 
 The Type might not be accurate, especially for Factories.
 Due to the DI limitations, it is not possible to show Dependencies.
 
+## LogFile
+
+Allows you to view the log of your app.
+Due to the limitations of Spring Boot Admins existing contract, it is needed to write an actual file with the log file somewhere.
+The location of this file can be set through the configuration
+
+```json logFilePath": "C:\\dev\\nactuator\\NactuatorSample\\NactuatorSample\\log20200204.txt"```
+
+OR implement a `ILogFileLocationResolver` and register it in the DI. 
+The latter is usually more appropiate for Serilog, because Serilogs FileSink regularly changes the name of the file. See this Sample for an Implementation.
+
 ## Todo
 
 1. Add more endpoints

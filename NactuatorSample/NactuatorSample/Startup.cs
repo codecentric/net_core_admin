@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nactuator;
+using NetCoreAdmin.Logfile;
+using NetCoreAdminSample;
 using Serilog;
 using System;
 
@@ -24,6 +26,7 @@ namespace NactuatorSample
             services.AddControllers();
             services.AddHealthChecks()
                 .AddCheck<ExampleHealthCheck>("example_health_check");
+            services.AddSingleton<ILogFileLocationResolver, SerilogLogResolver>();
             services.AddNetCoreAdmin(Configuration, x => {
                 Console.WriteLine(x);
                // x.RetryTimeout = TimeSpan.FromSeconds(99);

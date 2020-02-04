@@ -11,8 +11,8 @@ public class ExampleHealthCheck : IHealthCheck
     {
         var rnd = new Random();
 
-        var healthCheckResultHealthy = rnd.Next(2) == 0;
-       
+        //  var healthCheckResultHealthy = rnd.Next(2) == 0;
+        var healthCheckResultHealthy = true;
         if (healthCheckResultHealthy)
         {
             return Task.FromResult(
