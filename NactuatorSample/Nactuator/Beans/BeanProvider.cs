@@ -85,7 +85,7 @@ namespace NetCoreAdmin.Beans
                 return k.ImplementationInstance.GetType().ToString();
             }
 
-            return $"Factory: {k.ImplementationFactory.Target.GetType().ToString()}";
+            return $"Factory: {k.ImplementationFactory!.Target!.GetType().ToString()}";
         }
     }
 }

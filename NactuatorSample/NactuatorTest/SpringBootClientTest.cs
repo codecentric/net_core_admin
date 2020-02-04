@@ -32,6 +32,7 @@ namespace NactuatorTest
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
             await sbc.RegisterAsync();
+            sbc.Dispose();
         }
 
 
@@ -77,9 +78,10 @@ namespace NactuatorTest
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new System.Threading.CancellationToken());
-            await Task.Delay(11);
+            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await Task.Delay(11).ConfigureAwait(false);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.AtLeast(2));
+            sbc.Dispose();
         }
 
 
@@ -102,9 +104,10 @@ namespace NactuatorTest
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new System.Threading.CancellationToken());
-            await Task.Delay(11);
+            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await Task.Delay(11).ConfigureAwait(false);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.Exactly(1));
+            sbc.Dispose();
         }
 
         [Fact]
@@ -127,10 +130,11 @@ namespace NactuatorTest
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
             // the token passed to startasync is not the one used by ExecuteAsync (https://github.com/dotnet/extensions/issues/1245)
-            await sbc.StartAsync(new System.Threading.CancellationToken());
-            await Task.Delay(11);
-            await sbc.StopAsync(new System.Threading.CancellationToken());
+            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await Task.Delay(11).ConfigureAwait(false);
+            await sbc.StopAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
             sbc.Registering.Should().BeFalse();
+            sbc.Dispose();
         }
     }
 }

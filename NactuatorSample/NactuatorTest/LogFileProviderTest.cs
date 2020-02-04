@@ -16,7 +16,7 @@ namespace NetCoreAdminTest
     public class LogFileProviderTest
     {
         [Fact]
-        public async Task ReturnsErrorWhenFileDoesNotExist()
+        public void ReturnsErrorWhenFileDoesNotExist()
         {
             var mockLogger = new Mock<ILogger<LogfileProvider>>();
             var config = new SpringBootConfig
@@ -29,8 +29,7 @@ namespace NetCoreAdminTest
 
             var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
 
-            var result = await sut.GetLogAsync(null, null).ConfigureAwait(false);
-            result.Should().Contain(" Unable to view Logs.");
+            sut.Invoking(x => sut.GetLog(null, null).ConfigureAwait(false)).Should().Throw<FileNotFoundException>();
         }
 
         [Fact]
@@ -50,8 +49,11 @@ namespace NetCoreAdminTest
 
             var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
 
-            var result = await sut.GetLogAsync(null, null).ConfigureAwait(false);
-            result.Should().HaveLength(1000);
+            var result = sut.GetLog(null, null);
+            using var sr = new StreamReader(result);
+            var resultStr = await sr.ReadToEndAsync().ConfigureAwait(false);
+
+            resultStr.Should().HaveLength(1000);
         }
 
         [Fact]
@@ -71,9 +73,11 @@ namespace NetCoreAdminTest
 
             var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
 
-            var result = await sut.GetLogAsync(500, null).ConfigureAwait(false);
-            result.Length.Should().Be(503); //why 503 but not 500? maybe BOM? 
-            result.Should().ContainAll("A");
+            var result = sut.GetLog(500, null);
+            using  var sr = new StreamReader(result);
+            var resultStr = await sr.ReadToEndAsync().ConfigureAwait(false);
+            resultStr.Length.Should().Be(503); //why 503 but not 500? maybe BOM? 
+            resultStr.Should().ContainAll("A");
         }
 
         [Fact]
@@ -93,8 +97,10 @@ namespace NetCoreAdminTest
 
             var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
 
-            var result = await sut.GetLogAsync(1200, null).ConfigureAwait(false);
-            result.Length.Should().Be(0);
+            var result = sut.GetLog(1200, null);
+            using var sr = new StreamReader(result);
+            var resultStr = await sr.ReadToEndAsync().ConfigureAwait(false);
+            resultStr.Length.Should().Be(0);
         }
 
         [Fact]
@@ -114,9 +120,36 @@ namespace NetCoreAdminTest
 
             var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
 
-            var result = await sut.GetLogAsync(null, 500).ConfigureAwait(false);
-            result.Length.Should().Be(503); //why 503 but not 500? maybe BOM? 
-            result.Should().ContainAll("A");
+            var result = sut.GetLog(null, 500);
+            using var sr = new StreamReader(result);
+            var resultStr = await sr.ReadToEndAsync().ConfigureAwait(false);
+            resultStr.Length.Should().Be(497);  //why 497 but not 500? maybe BOM? 
+            resultStr.Should().ContainAll("A");
+        }
+
+
+        [Fact]
+        public async Task StartsAndTruncatesWhenEndSpecified()
+        {
+            var file = Path.GetTempFileName();
+            string contents = new string('A', 1000);
+            await File.WriteAllTextAsync(file, contents, Encoding.UTF8).ConfigureAwait(false);
+            var mockLogger = new Mock<ILogger<LogfileProvider>>();
+            var config = new SpringBootConfig
+            {
+                LogFilePath = file
+            };
+
+            var mockMonitor = new Mock<IOptionsMonitor<SpringBootConfig>>();
+            mockMonitor.Setup(x => x.CurrentValue).Returns(config);
+
+            var sut = new LogfileProvider(mockLogger.Object, mockMonitor.Object);
+
+            var result = sut.GetLog(100, 200);
+            using var sr = new StreamReader(result);
+            var resultStr = await sr.ReadToEndAsync().ConfigureAwait(false);
+            resultStr.Length.Should().Be(100); 
+            resultStr.Should().ContainAll("A");
         }
     }
 }

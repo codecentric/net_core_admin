@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Nactuator;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace NetCoreAdmin.Logfile
     public class LogfileProvider : ILogfileProvider
     {
         private readonly ILogger<LogfileProvider> logger;
-        private SpringBootConfig config;
+        private readonly SpringBootConfig config;
 
         public LogfileProvider(ILogger<LogfileProvider> logger, IOptionsMonitor<SpringBootConfig> optionsMonitor)
         {
@@ -26,27 +28,26 @@ namespace NetCoreAdmin.Logfile
             this.logger = logger;
         }
 
-        public async Task<string> GetLogAsync(long? startByte, long? stopByte)
+        public FileStream GetLog(long? startByte, long? stopByte)
         {
-            if (!File.Exists(config.LogFilePath)) {
+           if (!File.Exists(config.LogFilePath)) {
                 var msg = $"The log file at {config.LogFilePath} does not exist. Unable to view Logs. Please check your configuration";
                 logger.LogWarning(msg);
-                return msg;
+                throw new FileNotFoundException(msg);
             }
 
-            using var fs = new FileStream(config.LogFilePath, FileMode.Open);
+            var fs = new FileStream(config.LogFilePath, FileMode.Open);
 
             if (startByte != null)
             {
                 fs.Position = startByte.Value;
             }
 
-            using var sr = new StreamReader(fs, Encoding.UTF8);
-
-            string data = await sr.ReadToEndAsync().ConfigureAwait(false);
-
-            return data;
-
+            if (stopByte != null)
+            {
+                fs.SetLength(stopByte.Value);
+            } 
+            return fs;
         }
     }
 }
