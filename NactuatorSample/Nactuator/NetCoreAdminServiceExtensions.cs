@@ -14,7 +14,7 @@ namespace Nactuator
     {
         public static void AddNetCoreAdmin(this IServiceCollection services, IConfiguration configuration, Action<SpringBootConfig> configure = null!)
         {
-            var assembly = Assembly.GetAssembly(typeof(ActuatorController));
+            var assembly = Assembly.GetAssembly(typeof(NetCoreAdminServiceExtensions));
 
             services.AddOptions<SpringBootConfig>().Configure(x => {
                 configuration.GetSection("NetCoreAdmin").Bind(x);
