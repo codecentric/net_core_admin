@@ -31,6 +31,11 @@ namespace Nactuator
         [MinLength(1)]
         public Uri ServiceUrl { get; set; } = default!;
 
+        ///
+        /// Client-health-URL to register with. Inferred at runtime
+        ///
+        public Uri HealthUrl { get; set; } = default!;
+
         /// <summary>
         /// Additional metadata. Can be supplied by Configuration and dedicated IMetadataProviders.
         /// </summary>

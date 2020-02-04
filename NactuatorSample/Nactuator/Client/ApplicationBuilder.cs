@@ -52,9 +52,16 @@ namespace Nactuator
                 application.ServiceUrl = GetServiceUrl();
             }
 
+            application.HealthUrl = GetHealthUrl(); // since we need a speical data structure we only use our own health endpoint
+
             application.Metadata = GetMetadata();
 
             return application;
+        }
+
+        private Uri GetHealthUrl()
+        {
+            return new Uri(Url.Combine(GetManagementUrl().ToString(), "/health"));
         }
 
         private IReadOnlyDictionary<string, string> GetMetadata()
