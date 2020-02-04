@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nactuator;
 using NetCoreAdmin.Health;
 using System.Threading.Tasks;
 

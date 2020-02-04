@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NetCoreAdmin.Beans;
 using NetCoreAdmin.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace NetCoreAdminTest.ControllerTests

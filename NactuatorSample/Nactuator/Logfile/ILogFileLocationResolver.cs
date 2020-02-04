@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NetCoreAdmin.Logfile
+﻿namespace NetCoreAdmin.Logfile
 {
     public interface ILogFileLocationResolver
     {

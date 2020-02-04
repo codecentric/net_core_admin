@@ -4,7 +4,6 @@ using Moq;
 using NetCoreAdmin;
 using NetCoreAdmin.Controllers;
 using NetCoreAdmin.Health;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 

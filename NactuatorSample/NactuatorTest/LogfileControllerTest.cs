@@ -1,17 +1,10 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using Moq;
-using Moq.Protected;
 using NetCoreAdmin.Controllers;
 using NetCoreAdmin.Logfile;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NetCoreAdminTest
@@ -27,9 +20,9 @@ namespace NetCoreAdminTest
             string testData = new String('a', 1000);
             var controller = new LogfileController(mock.Object);
             using FileStream fs = new FileStream(file, FileMode.Open);
-            mock.Setup(x => x.GetLog(null, null)).Returns(fs);
-            var result = controller.Get(null);
-            mock.Verify(x => x.GetLog(null, null));
+            mock.Setup(x => x.GetLog()).Returns(fs);
+            var result = controller.Get();
+            mock.Verify(x => x.GetLog());
         }
 
         [Fact]
@@ -37,15 +30,15 @@ namespace NetCoreAdminTest
         {
             var mock = new Mock<ILogfileProvider>();
             using FileStream fs = new FileStream(file, FileMode.Open);
-            mock.Setup(x => x.GetLog(900, 901)).Returns(fs);
+            mock.Setup(x => x.GetLog()).Returns(fs);
             var controller = new LogfileController(mock.Object);
             var ctx = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
             };
             controller.ControllerContext = ctx;
-            var result = controller.Get(new System.Net.Http.Headers.RangeHeaderValue(900, 901));
-            mock.Verify(x => x.GetLog(900, 901), Times.Once);  
+            var result = controller.Get();
+            mock.Verify(x => x.GetLog(), Times.Once);  
         }
     }
 }

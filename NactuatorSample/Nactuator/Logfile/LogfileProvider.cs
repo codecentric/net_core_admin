@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Nactuator;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Logfile
 {
@@ -30,7 +24,7 @@ namespace NetCoreAdmin.Logfile
             this.resolver = resolver;
         }
 
-        public FileStream GetLog(long? startByte, long? stopByte)
+        public FileStream GetLog()
         {
             var logFilePath = GetLogFilePath();
 
@@ -43,16 +37,6 @@ namespace NetCoreAdmin.Logfile
 
             var fs = new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            if (startByte != null)
-            {
-                fs.Position = startByte.Value;
-            }
-
-            if (stopByte != null)
-            {
-  
-                fs.SetLength(stopByte.Value);
-            } 
             return fs;
         }
 

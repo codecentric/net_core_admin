@@ -31,7 +31,7 @@ namespace NactuatorTest
             restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = id }).AsTask);
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
-            await sbc.RegisterAsync();
+            await sbc.RegisterAsync().ConfigureAwait(false);
             sbc.Dispose();
         }
 
@@ -55,8 +55,9 @@ namespace NactuatorTest
                        
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            var result = await sbc.RegisterAsync();
+            var result = await sbc.RegisterAsync().ConfigureAwait(false);
             result.Should().Equals(id);
+            sbc.Dispose();
         }
 
         [Fact]

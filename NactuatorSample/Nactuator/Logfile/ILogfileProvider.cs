@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace NetCoreAdmin.Logfile
 {
     public interface ILogfileProvider
     {
-        FileStream GetLog(long? startByte, long? stopByte);
+        FileStream GetLog();
     }
 }
