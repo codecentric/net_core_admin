@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nactuator;
+using Serilog;
 using System;
 
 namespace NactuatorSample
@@ -39,8 +40,9 @@ namespace NactuatorSample
                 app.UseDeveloperExceptionPage();
             }
 
-// app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
+            app.UseSerilogRequestLogging(); // <-- Add this line
             app.UseRouting();
 
             app.UseAuthorization();

@@ -36,7 +36,7 @@ namespace NetCoreAdmin.Logfile
                 throw new FileNotFoundException(msg);
             }
 
-            var fs = new FileStream(config.LogFilePath, FileMode.Open);
+            var fs = new FileStream(config.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             if (startByte != null)
             {
