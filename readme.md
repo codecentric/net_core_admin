@@ -60,6 +60,16 @@ Due to the DI limitations, it is not possible to show Dependencies.
 ## Todo
 
 1. Add more endpoints
+
+    - Logging
+    - Info
+    - Components( and move them off Environment?)
+    - Threads
+    - Metrics
+    - Web - Mappings (and the other one?)
+    - Audit Log?
+    - Caches?
+
 1. Doku
 1. Auth
 1. Deregister
