@@ -3,9 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nactuator.Client;
 using NetCoreAdmin;
+using NetCoreAdmin.Beans;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace Nactuator
@@ -21,7 +20,9 @@ namespace Nactuator
                 configure?.Invoke(x);
             });
 
+            services.AddSingleton<IServiceCollection>(services); // is this even a good idea?
             services.AddSingleton<IHealthProvider, HealthProvider>();
+            services.AddSingleton<IBeanProvider, BeanProvider>();
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();

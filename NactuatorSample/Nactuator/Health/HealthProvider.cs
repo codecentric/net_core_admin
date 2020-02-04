@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using NetCoreAdmin.Health;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

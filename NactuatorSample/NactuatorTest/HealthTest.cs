@@ -1,13 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Moq.Protected;
 using NetCoreAdmin;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 

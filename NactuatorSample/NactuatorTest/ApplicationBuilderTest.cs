@@ -207,39 +207,6 @@ namespace NactuatorTest
                 .Throw<DuplicateKeyException>();
         }
 
-        [Fact]
-        public void CreateApplicationSetsHealthUrl()
-        {
-            var hostingEnv = Mock.Of<IWebHostEnvironment>();
-            hostingEnv.ApplicationName = "appName";
-
-            var config = new SpringBootConfig();
-            config.Application.ServiceUrl = new System.Uri("http://example.com");
-            var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
-            acessor.Setup(x => x.CurrentValue).Returns(config);
-
-            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
-            var app = sbc.CreateApplication();
-            app.HealthUrl.Should().Equals("http://example.com/actuator/health");
-        }
-
-
-        [Fact]
-        public void CreateApplicationRespectsHealthUrlFromSettings()
-        {
-            var hostingEnv = Mock.Of<IWebHostEnvironment>();
-            hostingEnv.ApplicationName = "appName";
-
-            var config = new SpringBootConfig();
-            config.Application.ServiceUrl = new System.Uri("http://example.com");
-            const string url = "http://example.com/another";
-            config.Application.HealthUrl = new System.Uri(url);
-            var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
-            acessor.Setup(x => x.CurrentValue).Returns(config);
-
-            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
-            var app = sbc.CreateApplication();
-            app.HealthUrl.Should().Equals(url);
-        }
+      
     }
 }

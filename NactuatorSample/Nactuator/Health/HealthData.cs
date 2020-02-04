@@ -7,5 +7,10 @@ namespace NetCoreAdmin.Health
         public string Status { get; set; } = string.Empty;
 
         public IReadOnlyDictionary<string, HealthComponent> Components { get; set; } = new Dictionary<string, HealthComponent>();
+
+        public override string ToString()
+        {
+            return $"{Status}";
+        }
     }
 }

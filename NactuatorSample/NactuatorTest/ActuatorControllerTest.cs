@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Nactuator;
 using NetCoreAdmin;
+using NetCoreAdmin.Beans;
 using NetCoreAdmin.Health;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,7 +20,7 @@ namespace NactuatorTest
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
             mockEnvProvider.Setup(x => x.GetEnvironmentData()).Returns(new EnvironmentData(new List<string>() {"env" }, new List<PropertySources>()));
     
-            var controller = new ActuatorController(null, mockEnvProvider.Object, null);
+            var controller = new ActuatorController(null, mockEnvProvider.Object, null, null);
 
             var result = controller.GetEnvironment();
 
@@ -35,7 +34,7 @@ namespace NactuatorTest
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
             mockEnvProvider.Setup(x => x.GetEnvironmentData()).Returns(new EnvironmentData(new List<string>() { Expected }, new List<PropertySources>()));
 
-            var controller = new ActuatorController(null, mockEnvProvider.Object, null);
+            var controller = new ActuatorController(null, mockEnvProvider.Object, null, null);
 
             var result = controller.GetEnvironment();
             var jsonResult = result.Result.As<JsonResult>();
@@ -49,7 +48,7 @@ namespace NactuatorTest
             var mockEnvProvider = new Mock<IEnvironmentProvider>();
             mockEnvProvider.Setup(x => x.GetEnvironmentData()).Returns(new EnvironmentData(new List<string>() { Expected }, new List<PropertySources>()));
 
-            var controller = new ActuatorController(null, mockEnvProvider.Object, null);
+            var controller = new ActuatorController(null, mockEnvProvider.Object, null, null);
 
             var result = controller.GetEnvironment();
             var jsonResult = result.Result.As<JsonResult>();
@@ -64,7 +63,7 @@ namespace NactuatorTest
             healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<HealthData>(
                 new HealthData() {Status="Healthy" }).AsTask());
 
-            var controller = new ActuatorController(null, null, healthMock.Object);
+            var controller = new ActuatorController(null, null, healthMock.Object, null);
 
             var result = await controller.GetHealthAsync().ConfigureAwait(false);
             var resultData = result.Result.As<OkObjectResult>();
@@ -79,12 +78,27 @@ namespace NactuatorTest
             healthMock.Setup(x => x.GetHealthAsync()).Returns(new ValueTask<HealthData>(
                 new HealthData() { Status = "Unhealthy" }).AsTask());
 
-            var controller = new ActuatorController(null, null, healthMock.Object);
+            var controller = new ActuatorController(null, null, healthMock.Object, null);
 
             var result = await controller.GetHealthAsync().ConfigureAwait(false);
             var resultData = result.Result.As<ObjectResult>();
             resultData.StatusCode.Should().Equals(200);
             ((HealthData)resultData.Value).Status.Should().Equals("Unhealthy");
+        }
+
+        [Fact]
+        public void GetBeanshReturnsResultOfIBeanProvider()
+        {
+            var beanMock = new Mock<IBeanProvider>();
+            BeanData beanData = new BeanData();
+            beanMock.Setup(x => x.GetBeanData()).Returns(beanData);
+
+            var controller = new ActuatorController(null, null, null, beanMock.Object);
+
+            var result = controller.GetBeans();
+            var resultData = result.Result.As<JsonResult>();
+            resultData.StatusCode.Should().Equals(200);
+            ((BeanData)resultData.Value).Should().Equals(beanData);
         }
     }
 }
