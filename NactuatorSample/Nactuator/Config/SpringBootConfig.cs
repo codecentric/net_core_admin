@@ -18,5 +18,10 @@ namespace Nactuator
         /// Configuration how this Application should register itself
         /// </summary>
         public Application Application { get; set; } = new Application();
+
+        /// <summary>
+        /// The path to the current log. If empty or invalid, log file viewing is disabled
+        /// </summary>
+        public string LogFilePath { get; set; } = string.Empty;
     }
 }

@@ -5,6 +5,7 @@ using Nactuator.Client;
 using NetCoreAdmin;
 using NetCoreAdmin.Beans;
 using NetCoreAdmin.Environment;
+using NetCoreAdmin.Logfile;
 using System;
 using System.Reflection;
 
@@ -28,6 +29,7 @@ namespace Nactuator
             services.AddHttpClient<ISpringBootClient, SpringBootClient>();
             services.AddSingleton<IApplicationBuilder, ApplicationBuilder>();
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
+            services.AddSingleton<ILogfileProvider, LogfileProvider>();
             services.AddSingleton<ISpringBootAdminRESTAPI, SpringBootAdminRESTAPI>();
             services.AddHostedService<SpringBootClient>();
 
