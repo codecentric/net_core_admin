@@ -40,14 +40,16 @@ Note that host.docker.internal is required on Windows hosts, otherwise it should
 
 Note that a lot of endpoints are exposed at /actuator/* - always secure them otherwise sensitive data WILL leak!.
 
-## Health
+## Implemented Endpoints
+
+### Health
 
 Per default, we respond with an "OK" Health result.
-You can customize this using Health Checks: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.1
+You can customize this using [Health Checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.1)
 
 Please note that we use an internal Health check url, not the one configured by HealthCheck due to the need to conforms to Actuators Data format.
 
-## Beans
+### Beans
 
 This maps to the Services registered via ASP.NET Cores DI.
 The displayed NAME is the concrete type, e.g. a DataProvider
@@ -57,16 +59,25 @@ In case of Lists of objects, a " | 1" is appended, since Actuator does not know 
 The Type might not be accurate, especially for Factories.
 Due to the DI limitations, it is not possible to show Dependencies.
 
-## LogFile
+### LogFile
 
 Allows you to view the log of your app.
 Due to the limitations of Spring Boot Admins existing contract, it is needed to write an actual file with the log file somewhere.
 The location of this file can be set through the configuration
 
-```json logFilePath": "C:\\dev\\nactuator\\NactuatorSample\\NactuatorSample\\log20200204.txt"```
+```json
+"logFilePath": "C:\\dev\\nactuator\\NactuatorSample\\NactuatorSample\\log20200204.txt"
+```
 
-OR implement a `ILogFileLocationResolver` and register it in the DI. 
+OR implement a `ILogFileLocationResolver` and register it in the DI.
 The latter is usually more appropiate for Serilog, because Serilogs FileSink regularly changes the name of the file. See this Sample for an Implementation.
+
+### Mappings / Routes
+
+This returns a list of all registered routes.
+Headers and Params are currently not supported
+The infrastructure relies heavily on the same Attributes Swashbuckle uses (e.g. Consumes/Produces and Header).
+In the future, we could probably leverage Swashbuckle itself, e.g. to get the headers, params and returns.
 
 ## Todo
 
@@ -77,12 +88,11 @@ The latter is usually more appropiate for Serilog, because Serilogs FileSink reg
     - Components( and move them off Environment?)
     - Threads
     - Metrics
-    - Web - Mappings (and the other one?)
     - Audit Log?
     - Caches?
-
 1. Doku
 1. Auth
 1. Deregister
 1. Get Config Validation working
 1. Single-Property and EDIT for Env
+1. Swashbuckle for Mappings
