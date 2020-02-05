@@ -72,7 +72,7 @@ The latter is usually more appropiate for Serilog, because Serilogs FileSink reg
 
 1. Add more endpoints
 
-    - Logging
+    - Loggers
     - Info
     - Components( and move them off Environment?)
     - Threads

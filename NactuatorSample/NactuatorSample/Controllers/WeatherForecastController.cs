@@ -23,6 +23,8 @@ namespace NactuatorSample.Controllers
         }
 
         [HttpGet]
+        [Produces("application/json")]
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         public IEnumerable<WeatherForecast> Get()
         {
@@ -34,6 +36,14 @@ namespace NactuatorSample.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        public ActionResult PostTest(WeatherForecast forecast)
+        {
+            _logger.LogInformation($"Got forecase: {forecast}");
+            return Ok();
         }
     }
 }

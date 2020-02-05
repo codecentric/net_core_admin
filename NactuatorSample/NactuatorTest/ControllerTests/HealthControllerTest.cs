@@ -21,7 +21,7 @@ namespace NetCoreAdminTest.ControllerTests
             var controller = new HealthController(healthMock.Object);
 
             var result = await controller.GetAsync().ConfigureAwait(false);
-            var resultData = result.Result.As<OkObjectResult>();
+            var resultData = result.Result.As<JsonResult>();
             resultData.StatusCode.Should().Equals(200);
             ((HealthData)resultData.Value).Status.Should().Equals("Healthy");
         }
@@ -36,7 +36,7 @@ namespace NetCoreAdminTest.ControllerTests
             var controller = new HealthController(healthMock.Object);
 
             var result = await controller.GetAsync().ConfigureAwait(false);
-            var resultData = result.Result.As<ObjectResult>();
+            var resultData = result.Result.As<JsonResult>();
             resultData.StatusCode.Should().Equals(200);
             ((HealthData)resultData.Value).Status.Should().Equals("Unhealthy");
         }

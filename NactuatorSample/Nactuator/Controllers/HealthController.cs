@@ -25,7 +25,9 @@ namespace NetCoreAdmin.Controllers
         public async Task<ActionResult<HealthData>> GetAsync()
         {
             var data = await health.GetHealthAsync().ConfigureAwait(false);
-            return Ok(data);
+            return new JsonResult(data){ 
+                ContentType = Constants.ActuatorContentType
+            };
         }
 
     }

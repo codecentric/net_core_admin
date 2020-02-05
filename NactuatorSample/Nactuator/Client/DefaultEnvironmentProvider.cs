@@ -1,6 +1,7 @@
 ﻿using Nactuator;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 
 namespace NetCoreAdmin.Environment
@@ -14,7 +15,7 @@ namespace NetCoreAdmin.Environment
             return new Dictionary<string, string>()
             {
 
-                {"startUpTime", DateTime.UtcNow.ToLongDateString() },
+                {"startUpTime", DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture) + "Z" },
                 {"NetCoreAdmin Version", version },
                  {"Project Version", projectVersion}
             };

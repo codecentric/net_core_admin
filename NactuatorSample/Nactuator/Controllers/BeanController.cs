@@ -27,7 +27,7 @@ namespace NetCoreAdmin.Controllers
             var data = beanProvider.GetBeanData();
             var result = new JsonResult(data)
             {
-                ContentType = "application/vnd.spring-boot.actuator.v3+json"
+                ContentType = Constants.ActuatorContentType
             };
             return result;
         }
