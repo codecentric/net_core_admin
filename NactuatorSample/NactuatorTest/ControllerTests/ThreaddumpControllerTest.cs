@@ -37,7 +37,8 @@ namespace NetCoreAdminTest.ControllerTests
             var controller = new ThreadDumpController(mock.Object);
 
             var result = controller.Get();
-            result.Should().BeAssignableTo<ForbidResult>();
+            result.Should().BeAssignableTo<StatusCodeResult>();
+            result.As<StatusCodeResult>().StatusCode.Should().Be(403);
         }
 
         [Fact]
@@ -50,7 +51,8 @@ namespace NetCoreAdminTest.ControllerTests
             var controller = new ThreadDumpController(mock.Object);
 
             var result = controller.Options();
-            result.Should().BeAssignableTo<ForbidResult>();
+            result.Should().BeAssignableTo<StatusCodeResult>();
+            result.As<StatusCodeResult>().StatusCode.Should().Be(403);
         }
 
     }

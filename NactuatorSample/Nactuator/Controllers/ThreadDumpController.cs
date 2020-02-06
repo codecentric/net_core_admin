@@ -24,7 +24,7 @@ namespace NetCoreAdmin.Controllers
         {
             if (!threadDumpProvider.IsEnabled)
             {
-                return Forbid();
+                return StatusCode(403);
             }
             return Ok();
         }
@@ -34,7 +34,7 @@ namespace NetCoreAdmin.Controllers
         {
             if (!threadDumpProvider.IsEnabled)
             {
-                return Forbid();
+                return StatusCode(403);
             }
 
             var result = new JsonResult(threadDumpProvider.GetThreadDump())
