@@ -10,10 +10,10 @@ namespace NetCoreAdmin.Mappings
 
     public  class Application
     {
-        public Mappings Mappings { get; set; } = default!;
+        public MappingInfo Mappings { get; set; } = default!;
     }
 
-    public  class Mappings
+    public  class MappingInfo
     {
         public DispatcherServlets DispatcherServlets { get; set; } = default!;
 

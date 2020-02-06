@@ -23,5 +23,10 @@ namespace Nactuator
         /// The path to the current log. If empty or invalid, log file viewing is disabled
         /// </summary>
         public string LogFilePath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Enables ThreadDumps. CAN CAUSE ALL SORTS OF WEIRD BUGS! SEE readme.md
+        /// </summary>
+        public bool EnableThreadDump { get; set; } = false;
     }
 }

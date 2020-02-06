@@ -30,7 +30,7 @@ namespace NetCoreAdmin.Mappings
                     {
                         "application", new Application()
                             {
-                                Mappings = new Mappings()
+                                Mappings = new MappingInfo()
                                 {
                                     DispatcherServlets = new DispatcherServlets()
                                     {
@@ -57,7 +57,7 @@ namespace NetCoreAdmin.Mappings
             );
         }
 
-        private Details GetDetails(ActionDescriptor x)
+        private static Details GetDetails(ActionDescriptor x)
         {
             return new Details()
             {
@@ -112,7 +112,7 @@ namespace NetCoreAdmin.Mappings
             };
         }
 
-        private string GetPredicate(ActionDescriptor x)
+        private static string GetPredicate(ActionDescriptor x)
         {
             var httpMethods = x.ActionConstraints.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods;
             var templates = new string[] { x.AttributeRouteInfo.Template };

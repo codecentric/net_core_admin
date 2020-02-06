@@ -79,6 +79,17 @@ Headers and Params are currently not supported
 The infrastructure relies heavily on the same Attributes Swashbuckle uses (e.g. Consumes/Produces and Header).
 In the future, we could probably leverage Swashbuckle itself, e.g. to get the headers, params and returns.
 
+### ThreadDump
+
+This returns the ThreadDump of the running process.
+HERE BE DRAGONS!
+.Net does not have the capabillity of Java to get the running processes at Runtime. I am using Debugging Interfaces to obtain this info, but this can crash / introduce weird bugs etc.
+Therefore, you need to allow the ThreadDump explicity - ideally only on DEV/INT never on Production.
+
+```json
+"enableThreadDump": true
+```
+
 ## Todo
 
 1. Add more endpoints
@@ -86,7 +97,6 @@ In the future, we could probably leverage Swashbuckle itself, e.g. to get the he
     - Loggers
     - Info
     - Components( and move them off Environment?)
-    - Threads
     - Metrics
     - Audit Log?
     - Caches?
@@ -96,3 +106,4 @@ In the future, we could probably leverage Swashbuckle itself, e.g. to get the he
 1. Get Config Validation working
 1. Single-Property and EDIT for Env
 1. Swashbuckle for Mappings
+1. Move Threaddump to extra package

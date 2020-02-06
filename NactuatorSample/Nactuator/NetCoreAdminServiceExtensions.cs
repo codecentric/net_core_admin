@@ -7,6 +7,7 @@ using NetCoreAdmin.Beans;
 using NetCoreAdmin.Environment;
 using NetCoreAdmin.Logfile;
 using NetCoreAdmin.Mappings;
+using NetCoreAdmin.Threaddump;
 using System;
 using System.Reflection;
 
@@ -24,6 +25,7 @@ namespace Nactuator
             });
 
             services.AddSingleton(services); // is this even a good idea?
+            services.AddSingleton<IThreadDumpProvider, ThreadDumpProvider>();
             services.AddSingleton<IMappingProvider, MappingProvider>();
             services.AddSingleton<IHealthProvider, HealthProvider>();
             services.AddSingleton<IBeanProvider, BeanProvider>();
