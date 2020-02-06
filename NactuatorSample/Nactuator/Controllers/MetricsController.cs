@@ -48,7 +48,7 @@ namespace NetCoreAdmin.Controllers
             return Ok(provider.GetMetricNamesAsync());
         }
 
-        [HttpGet("/{metric}")]
+        [HttpGet("{metric}")]
         public async Task<ActionResult<MetricsData>> GetByNameAsync([FromRoute]string metric)
         {
 
