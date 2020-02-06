@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Nactuator;
 using NetCoreAdmin.Logfile;
 using NetCoreAdminSample;
+using Prometheus;
 using Serilog;
 using System;
 
@@ -47,6 +48,8 @@ namespace NactuatorSample
 
             app.UseSerilogRequestLogging(); // <-- Add this line
             app.UseRouting();
+            // use the package https://github.com/prometheus-net/prometheus-net and https://github.com/djluck/prometheus-net.DotNetRuntime (See program.cs) to collect metric we can expose the SBA
+            app.UseHttpMetrics();
 
             app.UseAuthorization();
 
@@ -54,6 +57,7 @@ namespace NactuatorSample
             {
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NetCoreAdminSample;
 
 namespace NactuatorSample.Controllers
 {
@@ -28,6 +29,9 @@ namespace NactuatorSample.Controllers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         public IEnumerable<WeatherForecast> Get()
         {
+            var test = new MetricsCollector();
+            test.GetMetricsAsync().GetAwaiter().GetResult();
+
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

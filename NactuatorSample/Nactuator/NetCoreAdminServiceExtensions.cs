@@ -24,6 +24,8 @@ namespace Nactuator
                 configure?.Invoke(x);
             });
 
+            // todo add warnings if no metrics provider?
+
             services.AddSingleton(services); // is this even a good idea?
             services.AddSingleton<IThreadDumpProvider, ThreadDumpProvider>();
             services.AddSingleton<IMappingProvider, MappingProvider>();
