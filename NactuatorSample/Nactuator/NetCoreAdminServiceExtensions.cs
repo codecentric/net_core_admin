@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nactuator.Client;
 using NetCoreAdmin;
 using NetCoreAdmin.Beans;
 using NetCoreAdmin.Environment;
 using NetCoreAdmin.Logfile;
 using NetCoreAdmin.Mappings;
+using NetCoreAdmin.Metrics;
 using NetCoreAdmin.Threaddump;
 using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Nactuator
 {
@@ -25,9 +28,23 @@ namespace Nactuator
             });
 
             // todo add warnings if no metrics provider?
-
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                services.AddSingleton<ISystemStatisticsProvider, WindowsSystemStatisticsProvider>();
+            }
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                services.AddSingleton<ISystemStatisticsProvider, LinuxSystemStatisticsProvider>();
+            }
+            else
+            {
+                Console.WriteLine($"There is no ISystemStatisticsProvider on your plattform {RuntimeInformation.OSDescription}. Some System Statistics such as Total CPU Usage will not be available");
+                services.AddSingleton<ISystemStatisticsProvider, UnknownSystemStatisticsProvider>();
+            }
+          
             services.AddSingleton(services); // is this even a good idea?
             services.AddSingleton<IThreadDumpProvider, ThreadDumpProvider>();
+            services.AddSingleton<IMetricsProvider, BasicMetricsProvider>();
             services.AddSingleton<IMappingProvider, MappingProvider>();
             services.AddSingleton<IHealthProvider, HealthProvider>();
             services.AddSingleton<IBeanProvider, BeanProvider>();
@@ -37,6 +54,7 @@ namespace Nactuator
             services.AddScoped<IEnvironmentProvider, EnvironmentProvider>();
             services.AddSingleton<ILogfileProvider, LogfileProvider>();
             services.AddSingleton<ISpringBootAdminRESTAPI, SpringBootAdminRESTAPI>();
+            services.AddSingleton<ISimpleEventListener, SimpleEventListener>();
             services.AddHostedService<SpringBootClient>();
 
             services.AddControllers()

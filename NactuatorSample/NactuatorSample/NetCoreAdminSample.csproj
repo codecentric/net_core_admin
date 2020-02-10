@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nactuator\NetCoreAdmin.csproj" />
-    <ProjectReference Include="..\NetCoreAdmin.Metrics\NetCoreAdmin.Metrics.csproj" />
   </ItemGroup>
 
 

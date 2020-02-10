@@ -11,7 +11,7 @@ namespace NetCoreAdmin.Metrics
     {
         public static void AddNetCoreAdminMetrics(this IServiceCollection services)
         {
-            services.AddSingleton<IMetricsProvider, PrometheusMetricsProvider>();
+           // services.AddSingleton<IMetricsProvider, PrometheusMetricsProvider>();
         }
     }
 }

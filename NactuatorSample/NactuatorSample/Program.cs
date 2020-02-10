@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Prometheus.DotNetRuntime;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -14,21 +13,6 @@ namespace NactuatorSample
         {
             SetupSerilog();
 
-            if (Environment.GetEnvironmentVariable("NOMON") == null)
-            {
-                Log.Logger.Information("Enabling prometheus-net.DotNetStats");
-                DotNetRuntimeStatsBuilder.Customize()
-                    .WithThreadPoolSchedulingStats()
-                    .WithContentionStats()
-                    .WithGcStats()
-                    .WithJitStats()
-                    .WithThreadPoolStats()
-                    .WithErrorHandler(ex => Console.WriteLine("ERROR: " + ex.ToString()))
-                    //.WithDebuggingMetrics(true);
-                    .StartCollecting();
-            }
-
-
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -40,6 +24,7 @@ namespace NactuatorSample
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console()
+            .WriteTo.Debug()
             .WriteTo.File("log/log.txt", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
             .CreateLogger();
         }

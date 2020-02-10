@@ -1,9 +1,7 @@
-﻿using Prometheus;
+﻿using Prometheus.Client;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Metrics
@@ -12,24 +10,24 @@ namespace NetCoreAdmin.Metrics
     {
         public async Task GetMetricsAsync()
         {
-            var custom = Prometheus.Metrics.WithCustomRegistry(Prometheus.Metrics.DefaultRegistry);
-            using var stream = new MemoryStream();
-            await Prometheus.Metrics.DefaultRegistry.CollectAndExportAsTextAsync(stream).ConfigureAwait(false);
-            stream.Seek(0L, SeekOrigin.Begin);
-            using var reader = new StreamReader(stream);
-            var result = await reader.ReadToEndAsync().ConfigureAwait(false);
+            var hist = Prometheus.Client.Metrics.CreateHistogram("my_histogram", "help text", buckets: new[] { 0, 0.2, 0.4, 0.6, 0.8, 0.9 });
+            hist.Observe(0.4);
 
-            var field = typeof(Prometheus.CollectorRegistry).GetField("_collectors", BindingFlags.NonPublic | BindingFlags.Instance);
-            var collectors = (ConcurrentDictionary<string, Collector>)field.GetValue(Prometheus.Metrics.DefaultRegistry);
-            foreach (var kvp in collectors)
-            {
-                Console.WriteLine(kvp.Key);
-                Console.WriteLine(kvp.Value.Name);
-                Console.WriteLine(kvp.Value.LabelNames);
-            }
-            // todo get method CollectAndSerializeAsync
-            // implment Iserializer
-            // -> PROFIT!
+            var summary = Prometheus.Client.Metrics.CreateSummary("mySummary", "help text");
+            summary.Observe(1);
+            summary.Observe(2);
+            summary.Observe(3);
+
+            var registry = Prometheus.Client.Metrics.DefaultCollectorRegistry;
+            await registry.CollectToAsync(new MetricsWriter());
+
+            using var memStream = new MemoryStream();
+            await ScrapeHandler.ProcessAsync(Prometheus.Client.Metrics.DefaultCollectorRegistry, memStream);
+            memStream.Seek(0, SeekOrigin.Begin);
+
+            var rd = new StreamReader(memStream);
+            var txt = await rd.ReadToEndAsync();
+            // Console.WriteLine(txt);
         }
 
         public async Task<MetricsData> GetMetricByNameAsync(string name)

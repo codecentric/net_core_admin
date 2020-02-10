@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreAdmin.Metrics", "NetCoreAdmin.Metrics\NetCoreAdmin.Metrics.csproj", "{A99CEA70-D8AB-450A-90D6-F360E15788B4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{274E133D-9AF1-4A1A-BDF3-1E04682FADD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{274E133D-9AF1-4A1A-BDF3-1E04682FADD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{274E133D-9AF1-4A1A-BDF3-1E04682FADD4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A99CEA70-D8AB-450A-90D6-F360E15788B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A99CEA70-D8AB-450A-90D6-F360E15788B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A99CEA70-D8AB-450A-90D6-F360E15788B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A99CEA70-D8AB-450A-90D6-F360E15788B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

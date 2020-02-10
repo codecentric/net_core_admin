@@ -45,7 +45,11 @@ namespace NetCoreAdmin.Controllers
                 return StatusCode(403);
             }
 
-            return Ok(provider.GetMetricNamesAsync());
+            var result = new JsonResult(new { names = await provider.GetMetricNamesAsync() })
+            {
+                ContentType = Constants.ActuatorContentType
+            };
+            return result;           
         }
 
         [HttpGet("{metric}")]
@@ -59,9 +63,14 @@ namespace NetCoreAdmin.Controllers
 
             try
             {
-                var result = await provider.GetMetricByNameAsync(metric);
+                var metricData = await provider.GetMetricByNameAsync(metric);
 
-                return Ok(result);
+                var result = new JsonResult(metricData)
+                {
+                    ContentType = Constants.ActuatorContentType
+                };
+
+                return result;
             }
             catch (KeyNotFoundException)
             {

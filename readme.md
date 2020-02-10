@@ -107,3 +107,9 @@ Therefore, you need to allow the ThreadDump explicity - ideally only on DEV/INT 
 1. Single-Property and EDIT for Env
 1. Swashbuckle for Mappings
 1. Move Threaddump to extra package
+
+
+VOR RELEASE:
+Flexible Implementation, sodass wir default Provider reingeben, aber diese ggf. ersetzen können.
+AUTH
+METRICS
