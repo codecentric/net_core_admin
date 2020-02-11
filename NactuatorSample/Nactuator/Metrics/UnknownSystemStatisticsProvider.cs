@@ -2,9 +2,6 @@
 {
     public class UnknownSystemStatisticsProvider : ISystemStatisticsProvider
     {
-        public double GetMetric()
-        {
-            return 0;
-        }
+        public double Metric => 0;
     }
 }

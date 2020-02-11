@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NetCoreAdmin.Metrics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Controllers
 {
@@ -27,35 +25,35 @@ namespace NetCoreAdmin.Controllers
             }
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
         {
             if (provider == null)
             {
                 return StatusCode(403);
             }
+
             return Ok();
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetAsync()
+        public ActionResult<string> Get()
         {
             if (provider == null)
             {
                 return StatusCode(403);
             }
 
-            var result = new JsonResult(new { names = await provider.GetMetricNamesAsync() })
+            var result = new JsonResult(new { names = provider.GetMetricNames() })
             {
-                ContentType = Constants.ActuatorContentType
+                ContentType = Constants.ActuatorContentType,
             };
-            return result;           
+            return result;
         }
 
         [HttpGet("{metric}")]
-        public async Task<ActionResult<MetricsData>> GetByNameAsync([FromRoute]string metric)
+        public ActionResult<MetricsData> GetByName([FromRoute]string metric)
         {
-
             if (provider == null)
             {
                 return StatusCode(403);
@@ -63,11 +61,11 @@ namespace NetCoreAdmin.Controllers
 
             try
             {
-                var metricData = await provider.GetMetricByNameAsync(metric);
+                var metricData = provider.GetMetricByName(metric);
 
                 var result = new JsonResult(metricData)
                 {
-                    ContentType = Constants.ActuatorContentType
+                    ContentType = Constants.ActuatorContentType,
                 };
 
                 return result;

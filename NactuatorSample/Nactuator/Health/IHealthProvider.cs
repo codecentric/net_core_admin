@@ -1,5 +1,5 @@
-﻿using NetCoreAdmin.Health;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using NetCoreAdmin.Health;
 
 namespace NetCoreAdmin
 {

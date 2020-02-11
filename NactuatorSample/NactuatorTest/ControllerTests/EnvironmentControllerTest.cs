@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Nactuator;
 using NetCoreAdmin.Controllers;
-using System.Collections.Generic;
 using Xunit;
 
 namespace NetCoreAdminTest.ControllerTests
@@ -34,7 +34,7 @@ namespace NetCoreAdminTest.ControllerTests
 
             var result = controller.Get();
             var jsonResult = result.Result.As<JsonResult>();
-            ((EnvironmentData)jsonResult.Value).activeProfiles.Should().Equal(Expected);
+            ((EnvironmentData)jsonResult.Value).ActiveProfiles.Should().Equal(Expected);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace NetCoreAdminTest.ControllerTests
             var result = controller.Get();
             var jsonResult = result.Result.As<JsonResult>();
             jsonResult.ContentType.Should().Equals("application/vnd.spring-boot.actuator.v3+json");
-            ((EnvironmentData)jsonResult.Value).activeProfiles.Should().Equal(Expected);
+            ((EnvironmentData)jsonResult.Value).ActiveProfiles.Should().Equal(Expected);
         }
     }
 }

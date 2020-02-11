@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nactuator.Client;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Nactuator
 {
@@ -14,8 +14,6 @@ namespace Nactuator
         private readonly ISpringBootAdminRESTAPI restApi;
         private readonly SpringBootConfig config;
         private readonly Application app;
-
-        public bool Registering { get; set; } = false;
 
         public SpringBootClient(ILogger<SpringBootClient> logger, IApplicationBuilder applicationBuilder, IOptionsMonitor<SpringBootConfig> optionsAccessor, ISpringBootAdminRESTAPI restApi)
         {
@@ -45,6 +43,7 @@ namespace Nactuator
             app = applicationBuilder.CreateApplication();
         }
 
+        public bool Registering { get; set; } = false;
 
         public async Task<string> RegisterAsync()
         {
@@ -52,7 +51,6 @@ namespace Nactuator
             var response = await restApi.PostAsync(app, config.SpringBootServerUrl).ConfigureAwait(false);
             return response.Id;
         }
-
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -69,7 +67,7 @@ namespace Nactuator
                 try
                 {
                     logger.LogDebug("Registering for Spring Boot Admin.");
-                     await RegisterAsync().ConfigureAwait(false);
+                    await RegisterAsync().ConfigureAwait(false);
                     break;
                 }
 #pragma warning disable CA1031 // Do not catch general exception types
@@ -77,7 +75,6 @@ namespace Nactuator
 #pragma warning restore CA1031 // Do not catch general exception types
                 {
                     logger.LogError(e, "Could not connect to Spring Boot Admin Server. Will retry in {timespan}", config.RetryTimeout);
-                    
                 }
 
                 await Task.Delay(config.RetryTimeout).ConfigureAwait(false);

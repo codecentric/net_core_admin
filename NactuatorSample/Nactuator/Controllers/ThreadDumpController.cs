@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetCoreAdmin.Threaddump;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Controllers
 {
     [ApiController]
     [Route("/actuator/threaddump")]
     [Produces("application/json")]
-    public class ThreadDumpController: ControllerBase
+    public class ThreadDumpController : ControllerBase
     {
         private readonly IThreadDumpProvider threadDumpProvider;
 
@@ -19,13 +15,14 @@ namespace NetCoreAdmin.Controllers
             this.threadDumpProvider = threadDumpProvider;
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
         {
             if (!threadDumpProvider.IsEnabled)
             {
                 return StatusCode(403);
             }
+
             return Ok();
         }
 
@@ -39,7 +36,7 @@ namespace NetCoreAdmin.Controllers
 
             var result = new JsonResult(threadDumpProvider.GetThreadDump())
             {
-                ContentType = Constants.ActuatorContentType
+                ContentType = Constants.ActuatorContentType,
             };
 
             return result;

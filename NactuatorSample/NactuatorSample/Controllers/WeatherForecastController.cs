@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NetCoreAdminSample;
 
 namespace NactuatorSample.Controllers
 {
@@ -13,20 +12,20 @@ namespace NactuatorSample.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching",
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<WeatherForecastController> logger;
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         [HttpGet]
         [Produces("application/json")]
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Demo code")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -34,7 +33,7 @@ namespace NactuatorSample.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
+                Summary = Summaries[rng.Next(Summaries.Length)],
             })
             .ToArray();
         }
@@ -43,7 +42,7 @@ namespace NactuatorSample.Controllers
         [Consumes("application/json")]
         public ActionResult PostTest(WeatherForecast forecast)
         {
-            _logger.LogInformation($"Got forecase: {forecast}");
+            logger.LogInformation($"Got forecase: {forecast}");
             return Ok();
         }
     }

@@ -9,17 +9,17 @@ namespace Nactuator
     {
         public EnvironmentData(IReadOnlyList<string> activeProfiles, IReadOnlyCollection<PropertySources> propertySources)
         {
-            this.activeProfiles = activeProfiles;
-            this.propertySources = propertySources;
+            ActiveProfiles = activeProfiles;
+            PropertySources = propertySources;
         }
 
-        public IReadOnlyList<string> activeProfiles { get;  }
+        public IReadOnlyList<string> ActiveProfiles { get; }
 
-        public IReadOnlyCollection<PropertySources> propertySources { get;}
+        public IReadOnlyCollection<PropertySources> PropertySources { get; }
 
         public override string ToString()
         {
-            return $"{activeProfiles[0]} - sources: {propertySources.Count}";
+            return $"{ActiveProfiles[0]} - sources: {PropertySources.Count}";
         }
     }
 }

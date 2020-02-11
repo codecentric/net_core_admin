@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-
-namespace NetCoreAdmin.Threaddump
+﻿namespace NetCoreAdmin.Threaddump
 {
     public interface IThreadDumpProvider
     {
-        ThreadDumpData GetThreadDump();
-
         bool IsEnabled { get; }
+
+        ThreadDumpData GetThreadDump();
     }
 }

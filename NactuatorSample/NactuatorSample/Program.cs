@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
-using System;
 
 namespace NactuatorSample
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "Root")]
     public class Program
     {
         public static void Main(string[] args)
@@ -15,6 +14,14 @@ namespace NactuatorSample
 
             CreateHostBuilder(args).Build().Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
+            .UseSerilog();
 
         private static void SetupSerilog()
         {
@@ -28,13 +35,5 @@ namespace NactuatorSample
             .WriteTo.File("log/log.txt", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
             .CreateLogger();
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                })
-            .UseSerilog();
     }
 }

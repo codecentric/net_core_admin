@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using NetCoreAdmin.Health;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Controllers
 {
     [ApiController]
     [Route("/actuator/health")]
-    public class HealthController: ControllerBase
+    public class HealthController : ControllerBase
     {
         private readonly IHealthProvider health;
 
@@ -15,20 +15,20 @@ namespace NetCoreAdmin.Controllers
             this.health = health;
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
-        { 
+        {
             return Ok();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<ActionResult<HealthData>> GetAsync()
         {
             var data = await health.GetHealthAsync().ConfigureAwait(false);
-            return new JsonResult(data){ 
-                ContentType = Constants.ActuatorContentType
+            return new JsonResult(data)
+            {
+                ContentType = Constants.ActuatorContentType,
             };
         }
-
     }
 }

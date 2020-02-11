@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IO;
+using Microsoft.AspNetCore.Mvc;
 using NetCoreAdmin.Logfile;
-using System.IO;
 
 namespace NetCoreAdmin.Controllers
 {
     [ApiController]
     [Route("/actuator/logfile")]
-    public class LogfileController: ControllerBase
+    public class LogfileController : ControllerBase
     {
         private readonly ILogfileProvider logfileProvider;
 
@@ -15,13 +15,13 @@ namespace NetCoreAdmin.Controllers
             this.logfileProvider = logfileProvider;
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
         {
             return Ok();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public IActionResult Get()
         {
             try

@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NetCoreAdmin.Beans;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace NetCoreAdminTest
@@ -31,8 +31,9 @@ namespace NetCoreAdminTest
         public void GetsInformationFromServiceCollection()
         {
             var services = new Mock<IServiceCollection>();
-            var descriptors = new List<ServiceDescriptor>() {
-                new ServiceDescriptor(GetType(), this)
+            var descriptors = new List<ServiceDescriptor>()
+            {
+                new ServiceDescriptor(GetType(), this),
             };
             services.Setup(x => x.GetEnumerator()).Returns(() => descriptors.GetEnumerator());
 
@@ -46,6 +47,7 @@ namespace NetCoreAdminTest
             beanCtx.ParentId.Should().BeEmpty();
             beanCtx.Beans.Should().HaveCount(1);
             var bean = beanCtx.Beans.First();
+
             // if the name of this testclass changes, we would need to modify these strings, too.
             bean.Key.Should().Be(ExpectedName);
             bean.Value.Type.Should().Be(ExpectedName);

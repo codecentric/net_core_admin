@@ -3,7 +3,6 @@ using NetCoreAdmin.Beans;
 
 namespace NetCoreAdmin.Controllers
 {
-
     [ApiController]
     [Route("/actuator/beans")]
     public class BeanController : ControllerBase
@@ -15,19 +14,19 @@ namespace NetCoreAdmin.Controllers
             this.beanProvider = beanProvider;
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
         {
             return Ok();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public ActionResult<BeanData> GetBeans()
         {
             var data = beanProvider.GetBeanData();
             var result = new JsonResult(data)
             {
-                ContentType = Constants.ActuatorContentType
+                ContentType = Constants.ActuatorContentType,
             };
             return result;
         }

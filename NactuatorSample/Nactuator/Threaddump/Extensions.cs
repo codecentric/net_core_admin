@@ -1,30 +1,25 @@
-﻿using Microsoft.Diagnostics.Runtime;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Diagnostics.Runtime;
 using Microsoft.Diagnostics.Runtime.Utilities;
 using Microsoft.Diagnostics.Runtime.Utilities.Pdb;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Threaddump
 {
-    struct FileAndLineNumber
-    {
-        public string File;
-        public int Line;
-    }
-
     /// <summary>
     /// Source https://github.com/microsoft/clrmd/blob/master/src/Samples/FileAndLineNumbers/Program.cs
     /// </summary>
-    static class Extensions
+    internal static class Extensions
     {
-        static readonly Dictionary<PdbInfo, PdbReader> s_pdbReaders = new Dictionary<PdbInfo, PdbReader>();
+        private static readonly Dictionary<PdbInfo, PdbReader> PdbReaders = new Dictionary<PdbInfo, PdbReader>();
+
         public static FileAndLineNumber GetSourceLocation(this ClrStackFrame frame)
         {
             PdbReader reader = GetReaderForFrame(frame);
             if (reader is null)
-                return new FileAndLineNumber();
+            {
+                return default;
+            }
 
             PdbFunction function = reader.GetFunctionFromToken(frame.Method.MetadataToken);
             int ilOffset = FindIlOffset(frame);
@@ -35,7 +30,7 @@ namespace NetCoreAdmin.Threaddump
         private static FileAndLineNumber FindNearestLine(PdbFunction function, int ilOffset)
         {
             int distance = int.MaxValue;
-            FileAndLineNumber nearest = new FileAndLineNumber();
+            FileAndLineNumber nearest = default;
 
             foreach (PdbSequencePointCollection sequenceCollection in function.SequencePoints)
             {
@@ -62,17 +57,20 @@ namespace NetCoreAdmin.Threaddump
             foreach (ILToNativeMap item in frame.Method.ILOffsetMap)
             {
                 if (item.StartAddress > ip)
+                {
                     return last;
+                }
 
                 if (ip <= item.EndAddress)
+                {
                     return item.ILOffset;
+                }
 
                 last = item.ILOffset;
             }
 
             return last;
         }
-
 
         private static PdbReader GetReaderForFrame(ClrStackFrame frame)
         {
@@ -82,14 +80,16 @@ namespace NetCoreAdmin.Threaddump
             PdbReader reader = null!;
             if (info != null)
             {
-                if (!s_pdbReaders.TryGetValue(info, out reader!))
+                if (!PdbReaders.TryGetValue(info, out reader!))
                 {
                     SymbolLocator locator = GetSymbolLocator(module!);
                     string pdbPath = locator.FindPdb(info);
                     if (pdbPath != null)
+                    {
                         reader = new PdbReader(pdbPath);
+                    }
 
-                    s_pdbReaders[info] = reader;
+                    PdbReaders[info] = reader;
                 }
             }
 

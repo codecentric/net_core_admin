@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetCoreAdmin.Mappings
 {
@@ -21,6 +21,11 @@ namespace NetCoreAdmin.Mappings
             this.provider = provider;
         }
 
+        public static T GetAttributeOfType<T>(IList<object> from)
+        {
+            return from.OfType<T>().FirstOrDefault();
+        }
+
         public MappingData GetCurrentMapping()
         {
             var mappingData = new MappingData
@@ -34,27 +39,15 @@ namespace NetCoreAdmin.Mappings
                                 {
                                     DispatcherServlets = new DispatcherServlets()
                                     {
-                                        DispatcherServlet = GetRoutes()
-                                    }
-                                }
+                                        DispatcherServlet = GetRoutes(),
+                                    },
+                                },
                             }
-                    }
-                }
+                    },
+                },
             };
 
             return mappingData;
-        }
-
-        private IEnumerable<DispatcherServlet> GetRoutes()
-        {
-            return provider.ActionDescriptors.Items.Select(x => new DispatcherServlet()
-            {
-                Handler = x.DisplayName,
-                Predicate = GetPredicate(x),
-                Details = GetDetails(x)
-            }
-
-            );
         }
 
         private static Details GetDetails(ActionDescriptor x)
@@ -62,8 +55,27 @@ namespace NetCoreAdmin.Mappings
             return new Details()
             {
                 HandlerMethod = GetHandler(x),
-                RequestMappingConditions = GetRequestMappingConditions(x)
+                RequestMappingConditions = GetRequestMappingConditions(x),
             };
+        }
+
+        private static HandlerMethod GetHandler(ActionDescriptor x)
+        {
+            var controllerClass = x.DisplayName.Substring(0, x.DisplayName.LastIndexOf(".", StringComparison.InvariantCulture)); // totally ugly, but the name is not visible on the api surface and reflection would be even uglier
+
+            return new HandlerMethod()
+            {
+                Name = x.RouteValues["Action"],
+                ClassName = controllerClass,
+                Descriptor = string.Empty, // java specific
+            };
+        }
+
+        private static string GetPredicate(ActionDescriptor x)
+        {
+            var httpMethods = x.ActionConstraints.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods;
+            var templates = new string[] { x.AttributeRouteInfo.Template };
+            return $"{httpMethods.FirstOrDefault()} /{templates.FirstOrDefault()}";
         }
 
         private static RequestMappingConditions GetRequestMappingConditions(ActionDescriptor x)
@@ -91,32 +103,18 @@ namespace NetCoreAdmin.Mappings
                 Methods = methods ?? new List<string>(),
                 Params = new List<Header>(),
                 Patterns = patterns,
-                Produces = produces ?? new List<Consume>()
+                Produces = produces ?? new List<Consume>(),
             };
         }
 
-        public static T GetAttributeOfType<T>(IList<object> from)
+        private IEnumerable<DispatcherServlet> GetRoutes()
         {
-            return from.OfType<T>().FirstOrDefault();
-        }
-
-        private static HandlerMethod GetHandler(ActionDescriptor x)
-        {
-            var controllerClass = x.DisplayName.Substring(0, x.DisplayName.LastIndexOf(".", StringComparison.InvariantCulture)); // totally ugly, but the name is not visible on the api surface and reflection would be even uglier
-
-            return new HandlerMethod()
+            return provider.ActionDescriptors.Items.Select(x => new DispatcherServlet()
             {
-                Name = x.RouteValues["Action"],
-                ClassName = controllerClass,
-                Descriptor = string.Empty // java specific
-            };
-        }
-
-        private static string GetPredicate(ActionDescriptor x)
-        {
-            var httpMethods = x.ActionConstraints.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods;
-            var templates = new string[] { x.AttributeRouteInfo.Template };
-            return $"{httpMethods.FirstOrDefault()} /{templates.FirstOrDefault()}";
+                Handler = x.DisplayName,
+                Predicate = GetPredicate(x),
+                Details = GetDetails(x),
+            });
         }
     }
 }

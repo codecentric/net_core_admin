@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Nactuator
 {
@@ -24,7 +24,6 @@ namespace Nactuator
 
         public IReadOnlyCollection<PropertySources> ReadConfiguration()
         {
-
             var providers = ((ConfigurationRoot)configuration).Providers.ToList();
             var sources = new List<PropertySources>();
 
@@ -41,7 +40,7 @@ namespace Nactuator
 
                     if (!success)
                     {
-                        throw new Exception($"Could not ready key {key} from provider {providerName}");
+                        throw new KeyNotFoundException($"Could not ready key {key} from provider {providerName}");
                     }
 
                     data.Add(key, new PropertyValue(value));
@@ -57,8 +56,7 @@ namespace Nactuator
 
         private static string GetProviderName(IConfigurationProvider provider, IEnumerable<string> names, int postFix = 0)
         {
-
-            var name = $"{ provider.GetType().Name} - {postFix}";
+            var name = $"{provider.GetType().Name} - {postFix}";
 
             if (names.Contains(name))
             {
@@ -66,7 +64,6 @@ namespace Nactuator
             }
 
             return name;
-
         }
 
         private HashSet<string> GetFullKeyNames(IConfigurationProvider provider, string rootKey, HashSet<string> initialKeys)

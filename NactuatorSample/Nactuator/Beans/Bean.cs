@@ -5,14 +5,14 @@ namespace NetCoreAdmin.Beans
     public class Bean
     {
         /// <summary>
-        /// In .Net terms this is the type we registered for, e.g. IBeanProvider
+        /// In .Net terms this is the type we registered for, e.g. IBeanProvider.
         /// </summary>
         public IEnumerable<string> Aliases { get; set; } = new List<string>();
 
         public string Scope { get; set; } = string.Empty;
 
         /// <summary>
-        /// This is our actual type, e.g BeanProvider
+        /// This is our actual type, e.g BeanProvider.
         /// </summary>
         public string Type { get; set; } = string.Empty;
 

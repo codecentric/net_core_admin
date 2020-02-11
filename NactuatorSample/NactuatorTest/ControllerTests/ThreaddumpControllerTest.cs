@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NetCoreAdmin.Controllers;
 using NetCoreAdmin.Threaddump;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace NetCoreAdminTest.ControllerTests
@@ -54,6 +51,5 @@ namespace NetCoreAdminTest.ControllerTests
             result.Should().BeAssignableTo<StatusCodeResult>();
             result.As<StatusCodeResult>().StatusCode.Should().Be(403);
         }
-
     }
 }

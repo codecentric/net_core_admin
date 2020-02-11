@@ -2,6 +2,6 @@
 {
     public interface ISystemStatisticsProvider
     {
-        double GetMetric();
+        double Metric { get; }
     }
 }

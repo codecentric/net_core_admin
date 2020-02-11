@@ -19,28 +19,4 @@ namespace NetCoreAdmin.Metrics
             return $"{Name}";
         }
     }
-
-    public class AvailableTag
-    {        
-        public string Tag { get; set; } = string.Empty;
-
-        public IEnumerable<string> Values { get; set; } = default!;
-
-        public override string ToString()
-        {
-            return $"{Tag}: {string.Join(", ", Values)}";
-        }
-    }
-
-    public class Measurement
-    {
-        public string Statistic { get; set; } = string.Empty;
-
-        public double Value { get; set; } = 0L;
-
-        public override string ToString()
-        {
-            return $"{Value} {Statistic}";
-        }
-    }
 }

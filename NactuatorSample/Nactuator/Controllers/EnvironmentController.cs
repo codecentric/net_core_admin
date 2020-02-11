@@ -5,7 +5,7 @@ namespace NetCoreAdmin.Controllers
 {
     [ApiController]
     [Route("/actuator/env")]
-    public class EnvironmentController: ControllerBase
+    public class EnvironmentController : ControllerBase
     {
         private readonly IEnvironmentProvider environmentProvider;
 
@@ -14,19 +14,19 @@ namespace NetCoreAdmin.Controllers
             this.environmentProvider = environmentProvider;
         }
 
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
-        { 
+        {
             return Ok();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public ActionResult<EnvironmentData> Get()
         {
             var data = environmentProvider.GetEnvironmentData();
             var result = new JsonResult(data)
             {
-                ContentType = Constants.ActuatorContentType
+                ContentType = Constants.ActuatorContentType,
             };
             return result;
         }

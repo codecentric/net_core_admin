@@ -16,8 +16,7 @@ namespace NetCoreAdmin.Controllers
             this.mappingProvider = mappingProvider;
         }
 
-
-        [HttpOptions()]
+        [HttpOptions]
         public ActionResult Options()
         {
             return Ok();
@@ -26,10 +25,9 @@ namespace NetCoreAdmin.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-
             var result = new JsonResult(mappingProvider.GetCurrentMapping())
             {
-                ContentType = Constants.ActuatorContentType
+                ContentType = Constants.ActuatorContentType,
             };
 
             return result;

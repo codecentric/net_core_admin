@@ -13,7 +13,6 @@ namespace Nactuator
             Properties = properties;
         }
 
-    
         public string Name { get; }
 
         public IReadOnlyDictionary<string, PropertyValue> Properties { get; }

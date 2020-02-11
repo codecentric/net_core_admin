@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nactuator;
-using System.Collections.Generic;
 using Xunit;
 
 namespace NactuatorTest
@@ -72,7 +72,7 @@ namespace NactuatorTest
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-            var sbc = new ApplicationBuilder(hostingEnv,  new List<IMetadataProvider>(), acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>(), acessor.Object);
             var app = sbc.CreateApplication();
             app.ManagementUrl.Should().Equals("http://example.com/");
         }
@@ -108,10 +108,10 @@ namespace NactuatorTest
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test", "value" }
+                { "test", "value" },
             });
 
-            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() {mdp.Object }, acessor.Object);
+            var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() { mdp.Object }, acessor.Object);
             var app = sbc.CreateApplication();
 
             app.Metadata.Count.Should().Equals(1);
@@ -133,7 +133,7 @@ namespace NactuatorTest
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test", "value" }
+                { "test", "value" },
             });
 
             var sbc = new ApplicationBuilder(hostingEnv, new List<IMetadataProvider>() { mdp.Object }, acessor.Object);
@@ -144,7 +144,6 @@ namespace NactuatorTest
             app.Metadata.Should().Contain(new KeyValuePair<string, string>("unique", "value"));
         }
 
-
         [Fact]
         public void CreateApplicationConsumesAllMetadata()
         {
@@ -154,13 +153,13 @@ namespace NactuatorTest
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test", "value" }
+                { "test", "value" },
             });
 
             var mdp2 = new Mock<IMetadataProvider>();
             mdp2.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test2", "value2" }
+                { "test2", "value2" },
             });
 
             var config = new SpringBootConfig();
@@ -176,7 +175,6 @@ namespace NactuatorTest
             app.Metadata.Should().Contain(new KeyValuePair<string, string>("test2", "value2"));
         }
 
-
         [Fact]
         public void CreateApplicationThrowsOnDuplicateData()
         {
@@ -186,13 +184,13 @@ namespace NactuatorTest
             var mdp = new Mock<IMetadataProvider>();
             mdp.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test", "value" }
+                { "test", "value" },
             });
 
             var mdp2 = new Mock<IMetadataProvider>();
             mdp2.Setup(x => x.GetMetadata()).Returns(new Dictionary<string, string>()
             {
-                {"test", "value2" }
+                { "test", "value2" },
             });
 
             var config = new SpringBootConfig();

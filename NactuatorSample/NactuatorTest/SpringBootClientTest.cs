@@ -1,18 +1,19 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nactuator;
 using Nactuator.Client;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NactuatorTest
 {
     public class SpringBootClientTest
     {
-        private const string id = "someId";
+        private const string Id = "someId";
 
         [Fact]
         public async Task RegisterUsesUrlFromConfig()
@@ -28,13 +29,12 @@ namespace NactuatorTest
 
             var logger = new Mock<ILogger<SpringBootClient>>();
             var restAPiMock = new Mock<ISpringBootAdminRESTAPI>();
-            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = id }).AsTask);
+            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = Id }).AsTask);
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
             await sbc.RegisterAsync().ConfigureAwait(false);
             sbc.Dispose();
         }
-
 
         [Fact]
         public async Task RegisterReturnsAssignedId()
@@ -48,15 +48,14 @@ namespace NactuatorTest
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-
             var logger = new Mock<ILogger<SpringBootClient>>();
             var restAPiMock = new Mock<ISpringBootAdminRESTAPI>();
-            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = id }).AsTask);
-                       
+            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = Id }).AsTask);
+
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
             var result = await sbc.RegisterAsync().ConfigureAwait(false);
-            result.Should().Equals(id);
+            result.Should().Equals(Id);
             sbc.Dispose();
         }
 
@@ -67,24 +66,22 @@ namespace NactuatorTest
             appBuilder.Setup(x => x.CreateApplication()).Returns(new Application());
 
             Uri uri = new Uri("http://example.com");
-            var config = new SpringBootConfig() { SpringBootServerUrl = uri, RetryTimeout=TimeSpan.FromMilliseconds(5) };
+            var config = new SpringBootConfig() { SpringBootServerUrl = uri, RetryTimeout = TimeSpan.FromMilliseconds(5) };
 
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-
             var logger = new Mock<ILogger<SpringBootClient>>();
             var restAPiMock = new Mock<ISpringBootAdminRESTAPI>();
-            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Throws(new Exception());
+            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Throws(new DuplicateKeyException());
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await sbc.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(11).ConfigureAwait(false);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.AtLeast(2));
             sbc.Dispose();
         }
-
 
         [Fact]
         public async Task ExecuteAsyncStopsWhenSuccess()
@@ -98,14 +95,13 @@ namespace NactuatorTest
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-
             var logger = new Mock<ILogger<SpringBootClient>>();
             var restAPiMock = new Mock<ISpringBootAdminRESTAPI>();
-            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = id }).AsTask);
+            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Returns(new ValueTask<SpringBootRegisterResponse>(new SpringBootRegisterResponse() { Id = Id }).AsTask);
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
-            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await sbc.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(11).ConfigureAwait(false);
             restAPiMock.Verify(x => x.PostAsync(It.IsAny<Application>(), It.IsAny<Uri>()), Times.Exactly(1));
             sbc.Dispose();
@@ -123,17 +119,16 @@ namespace NactuatorTest
             var acessor = new Mock<IOptionsMonitor<SpringBootConfig>>();
             acessor.Setup(x => x.CurrentValue).Returns(config);
 
-
             var logger = new Mock<ILogger<SpringBootClient>>();
             var restAPiMock = new Mock<ISpringBootAdminRESTAPI>();
-            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Throws(new Exception());
+            restAPiMock.Setup(x => x.PostAsync(It.IsNotNull<Application>(), It.Is<Uri>(x => x == uri))).Throws(new DuplicateKeyException());
 
             var sbc = new SpringBootClient(logger.Object, appBuilder.Object, acessor.Object, restAPiMock.Object);
 
             // the token passed to startasync is not the one used by ExecuteAsync (https://github.com/dotnet/extensions/issues/1245)
-            await sbc.StartAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await sbc.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(11).ConfigureAwait(false);
-            await sbc.StopAsync(new System.Threading.CancellationToken()).ConfigureAwait(false);
+            await sbc.StopAsync(CancellationToken.None).ConfigureAwait(false);
             sbc.Registering.Should().BeFalse();
             sbc.Dispose();
         }

@@ -1,8 +1,8 @@
-﻿using Nactuator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using Nactuator;
 
 namespace NetCoreAdmin.Environment
 {
@@ -14,10 +14,9 @@ namespace NetCoreAdmin.Environment
             var projectVersion = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
             return new Dictionary<string, string>()
             {
-
-                {"startUpTime", DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture) + "Z" },
-                {"NetCoreAdmin Version", version },
-                 {"Project Version", projectVersion}
+                { "startUpTime", DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture) + "Z" },
+                { "NetCoreAdmin Version", version },
+                { "Project Version", projectVersion },
             };
         }
     }

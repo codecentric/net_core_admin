@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+﻿using System.IO;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nactuator;
 using NetCoreAdmin.Logfile;
-using System.IO;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NetCoreAdminTest
@@ -18,7 +18,7 @@ namespace NetCoreAdminTest
             var mockLogger = new Mock<ILogger<LogfileProvider>>();
             var config = new SpringBootConfig
             {
-                LogFilePath = "does/not/exist.log"
+                LogFilePath = "does/not/exist.log",
             };
 
             var mockMonitor = new Mock<IOptionsMonitor<SpringBootConfig>>();
@@ -35,7 +35,7 @@ namespace NetCoreAdminTest
             var mockLogger = new Mock<ILogger<LogfileProvider>>();
             var config = new SpringBootConfig
             {
-                LogFilePath = null
+                LogFilePath = null,
             };
 
             var mockMonitor = new Mock<IOptionsMonitor<SpringBootConfig>>();
@@ -62,7 +62,7 @@ namespace NetCoreAdminTest
             var mockLogger = new Mock<ILogger<LogfileProvider>>();
             var config = new SpringBootConfig
             {
-                LogFilePath = "does/not/exist"
+                LogFilePath = "does/not/exist",
             };
 
             var mockMonitor = new Mock<IOptionsMonitor<SpringBootConfig>>();
@@ -83,7 +83,6 @@ namespace NetCoreAdminTest
             resultStr.Should().HaveLength(1000);
         }
 
-
         [Fact]
         public async Task ReturnsContentOfFileWhenNoRange()
         {
@@ -93,7 +92,7 @@ namespace NetCoreAdminTest
             var mockLogger = new Mock<ILogger<LogfileProvider>>();
             var config = new SpringBootConfig
             {
-                LogFilePath = file
+                LogFilePath = file,
             };
 
             var mockMonitor = new Mock<IOptionsMonitor<SpringBootConfig>>();
@@ -109,4 +108,3 @@ namespace NetCoreAdminTest
         }
     }
 }
-

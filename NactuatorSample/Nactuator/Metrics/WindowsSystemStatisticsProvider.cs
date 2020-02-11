@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Metrics
 {
@@ -19,13 +16,15 @@ namespace NetCoreAdmin.Metrics
             }
 
             processorTimePerfCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-
         }
 
-        public double GetMetric()
+        public double Metric
         {
-            var value = processorTimePerfCounter.NextValue();
-            return (double)value / 100;
+            get
+            {
+                var value = processorTimePerfCounter.NextValue();
+                return (double)value / 100;
+            }
         }
 
         public void Dispose()

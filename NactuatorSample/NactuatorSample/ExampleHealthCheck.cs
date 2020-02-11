@@ -1,25 +1,27 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-public class ExampleHealthCheck : IHealthCheck
+namespace NetCoreAdminSample
 {
-    public Task<HealthCheckResult> CheckHealthAsync(
-        HealthCheckContext context,
-        CancellationToken cancellationToken = default)
+    public class ExampleHealthCheck : IHealthCheck
     {
-        var rnd = new Random();
-
-        //  var healthCheckResultHealthy = rnd.Next(2) == 0;
-        var healthCheckResultHealthy = true;
-        if (healthCheckResultHealthy)
+        public Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(
-                HealthCheckResult.Healthy("A healthy result."));
-        }
+            // var rnd = new Random();
 
-        return Task.FromResult(
-            HealthCheckResult.Unhealthy("An unhealthy result."));
+            // var healthCheckResultHealthy = rnd.Next(2) == 0;
+            var healthCheckResultHealthy = true;
+            if (healthCheckResultHealthy)
+            {
+                return Task.FromResult(
+                    HealthCheckResult.Healthy("A healthy result."));
+            }
+
+            return Task.FromResult(
+                HealthCheckResult.Unhealthy("An unhealthy result."));
+        }
     }
 }

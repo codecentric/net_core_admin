@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NetCoreAdmin;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NetCoreAdminTest
@@ -36,7 +36,6 @@ namespace NetCoreAdminTest
             var sut = new HealthProvider(logger.Object, new HealthCheckServiceStub());
             var healthData = await sut.GetHealthAsync().ConfigureAwait(false);
             healthData.Status.Should().Be("Healthy");
-
         }
     }
 }

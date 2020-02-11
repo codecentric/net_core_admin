@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
+﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Nactuator.Client;
 using NetCoreAdmin;
 using NetCoreAdmin.Beans;
@@ -10,9 +12,6 @@ using NetCoreAdmin.Logfile;
 using NetCoreAdmin.Mappings;
 using NetCoreAdmin.Metrics;
 using NetCoreAdmin.Threaddump;
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Nactuator
 {
@@ -22,7 +21,8 @@ namespace Nactuator
         {
             var assembly = Assembly.GetAssembly(typeof(NetCoreAdminServiceExtensions));
 
-            services.AddOptions<SpringBootConfig>().Configure(x => {
+            services.AddOptions<SpringBootConfig>().Configure(x =>
+            {
                 configuration.GetSection("NetCoreAdmin").Bind(x);
                 configure?.Invoke(x);
             });
@@ -32,7 +32,7 @@ namespace Nactuator
             {
                 services.AddSingleton<ISystemStatisticsProvider, WindowsSystemStatisticsProvider>();
             }
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 services.AddSingleton<ISystemStatisticsProvider, LinuxSystemStatisticsProvider>();
             }
@@ -41,7 +41,7 @@ namespace Nactuator
                 Console.WriteLine($"There is no ISystemStatisticsProvider on your plattform {RuntimeInformation.OSDescription}. Some System Statistics such as Total CPU Usage will not be available");
                 services.AddSingleton<ISystemStatisticsProvider, UnknownSystemStatisticsProvider>();
             }
-          
+
             services.AddSingleton(services); // is this even a good idea?
             services.AddSingleton<IThreadDumpProvider, ThreadDumpProvider>();
             services.AddSingleton<IMetricsProvider, BasicMetricsProvider>();

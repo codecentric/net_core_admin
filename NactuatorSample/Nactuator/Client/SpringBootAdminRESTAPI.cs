@@ -14,11 +14,12 @@ namespace Nactuator.Client
         {
             httpClient = new HttpClient();
         }
+
         public async Task<SpringBootRegisterResponse> PostAsync(Application application, Uri url)
         {
             var content = JsonSerializer.Serialize(application, new JsonSerializerOptions()
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             });
 
             using var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
@@ -29,7 +30,7 @@ namespace Nactuator.Client
 
             var springResponse = JsonSerializer.Deserialize<SpringBootRegisterResponse>(responseContent, new JsonSerializerOptions()
             {
-                PropertyNameCaseInsensitive = true
+                PropertyNameCaseInsensitive = true,
             });
 
             return springResponse;
@@ -40,7 +41,6 @@ namespace Nactuator.Client
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
 
         protected virtual void Dispose(bool disposing)
         {

@@ -1,12 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Moq;
 using Nactuator;
-using System.Collections.Generic;
 using Xunit;
-using FluentAssertions;
-using System.Linq;
-using Microsoft.AspNetCore.Hosting;
 
 namespace NactuatorTest
 {
@@ -18,12 +18,12 @@ namespace NactuatorTest
             var provider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
                 { "test2", "2" },
-                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "3" }
+                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "3" },
             };
 
             using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
-               provider
+               provider,
             });
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
@@ -44,21 +44,20 @@ namespace NactuatorTest
         {
             var firstProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
-                { "test", "test" }
+                { "test", "test" },
             };
 
             var secondProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
                 { "test2", "2" },
-                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" }
+                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" },
             };
 
             using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
                firstProvider,
-               secondProvider
+               secondProvider,
             });
-
 
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
@@ -68,9 +67,8 @@ namespace NactuatorTest
             var lastResult = result.Last();
             firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
             lastResult.Name.Should().Be("MemoryConfigurationProvider - 1");
-  
         }
-            
+
         [Fact]
         public void GetEnvironmentDataIncludesEnvironmentName()
         {
@@ -79,27 +77,25 @@ namespace NactuatorTest
             hostingEnv.EnvironmentName = envName;
             var firstProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
-                { "test", "test" }
+                { "test", "test" },
             };
 
             var secondProvider = new MemoryConfigurationProvider(new MemoryConfigurationSource())
             {
                 { "test2", "2" },
-                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" }
+                { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "2" },
             };
 
             using var configurationRoot = new ConfigurationRoot(new List<IConfigurationProvider>()
             {
                firstProvider,
-               secondProvider
+               secondProvider,
             });
-
 
             var sut = new EnvironmentProvider(configurationRoot, hostingEnv);
 
             var data = sut.GetEnvironmentData();
-            data.activeProfiles.Should().Contain(envName);
+            data.ActiveProfiles.Should().Contain(envName);
         }
-    
     }
 }

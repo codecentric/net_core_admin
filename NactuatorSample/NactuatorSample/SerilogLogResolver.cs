@@ -1,6 +1,6 @@
-﻿using NetCoreAdmin.Logfile;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using NetCoreAdmin.Logfile;
 
 namespace NetCoreAdminSample
 {

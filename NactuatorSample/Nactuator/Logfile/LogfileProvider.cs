@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.IO;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nactuator;
-using System;
-using System.IO;
 
 namespace NetCoreAdmin.Logfile
 {
@@ -12,7 +12,7 @@ namespace NetCoreAdmin.Logfile
         private readonly ILogFileLocationResolver resolver;
         private readonly SpringBootConfig config;
 
-        public LogfileProvider(ILogger<LogfileProvider> logger, IOptionsMonitor<SpringBootConfig> optionsMonitor, ILogFileLocationResolver resolver=null!)
+        public LogfileProvider(ILogger<LogfileProvider> logger, IOptionsMonitor<SpringBootConfig> optionsMonitor, ILogFileLocationResolver resolver = null!)
         {
             if (optionsMonitor is null)
             {
@@ -44,7 +44,8 @@ namespace NetCoreAdmin.Logfile
         {
             var resolved = resolver?.ResolveLogFileLocation();
 
-            if (resolved != null) {
+            if (resolved != null)
+            {
                 logger.LogDebug("Resolved log file to {filePath}", resolved);
                 return resolved;
             }
@@ -57,8 +58,6 @@ namespace NetCoreAdmin.Logfile
             }
 
             return config.LogFilePath;
-
-
         }
     }
 }

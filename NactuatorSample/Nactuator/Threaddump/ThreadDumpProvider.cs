@@ -1,13 +1,12 @@
-﻿using Microsoft.Diagnostics.Runtime;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Nactuator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Diagnostics.Runtime;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Nactuator;
 
 namespace NetCoreAdmin.Threaddump
 {
@@ -26,7 +25,8 @@ namespace NetCoreAdmin.Threaddump
             this.logger = logger;
             this.options = optionsMonitor.CurrentValue;
 
-            if (options.EnableThreadDump) {
+            if (options.EnableThreadDump)
+            {
                 logger.LogInformation("ThreadDumps are ENABLED. Beware of unexpected crashes and misbehaviour. Do not use this setting in Production");
             }
             else
@@ -39,13 +39,15 @@ namespace NetCoreAdmin.Threaddump
 
         public ThreadDumpData GetThreadDump()
         {
-            if (!options.EnableThreadDump) {
+            if (!options.EnableThreadDump)
+            {
                 throw new InvalidOperationException("Threaddumps disabled. Activate in SpringBootConfig.EnableThreadDump");
             }
 
             var pid = Process.GetCurrentProcess().Id;
             using var dataTarget = DataTarget.AttachToProcess(pid, 5000, AttachFlag.Passive);
-            //using var dataTarget = DataTarget.CreateSnapshotAndAttach(pid);
+
+            // using var dataTarget = DataTarget.CreateSnapshotAndAttach(pid);
             var runtimeInfo = dataTarget.ClrVersions[0];
             ClrRuntime runtime = runtimeInfo.CreateRuntime();
 
@@ -63,9 +65,9 @@ namespace NetCoreAdmin.Threaddump
                 BlockedCount = t.BlockingObjects?.Count ?? 0L,
 #pragma warning restore CS0612 // Type or member is obsolete
                 WaitedTime = 0L, // no idea
-                WaitedCount = 0L, //no idea
-                LockName = string.Empty, //no idea
-                LockOwnerId = -1L, //no idea
+                WaitedCount = 0L, // no idea
+                LockName = string.Empty, // no idea
+                LockOwnerId = -1L, // no idea
                 InNative = false, // no idea
                 Suspended = t.IsUserSuspended,
                 ThreadState = GetThreadState(t),
@@ -74,11 +76,10 @@ namespace NetCoreAdmin.Threaddump
 
             var threadDumpData = new ThreadDumpData()
             {
-                Threads = resultThreads
+                Threads = resultThreads,
             };
 
             return threadDumpData;
-
         }
 
         private static List<StackTrace> GetStackTrace(ClrThread thread)
@@ -92,17 +93,31 @@ namespace NetCoreAdmin.Threaddump
 
         private static StackTrace GetStackTrace(ClrStackFrame stackFrame)
         {
-            var FileAndLine = stackFrame.GetSourceLocation();
-           // Console.WriteLine(stackFrame.DisplayString);
+            var fileAndLine = stackFrame.GetSourceLocation();
+
+            // Console.WriteLine(stackFrame.DisplayString);
             return new StackTrace()
             {
                 MethodName = stackFrame.ToString()!,
-                FileName = FileAndLine.File,
-                LineNumber = FileAndLine.Line,
+                FileName = fileAndLine.File,
+                LineNumber = fileAndLine.Line,
                 ClassName = stackFrame.ModuleName,
-                NativeMethod = stackFrame.Kind == ClrStackFrameType.Runtime
-
+                NativeMethod = stackFrame.Kind == ClrStackFrameType.Runtime,
             };
+        }
+
+        private static string? GetThreadName(ClrThread t, Dictionary<int, string> threadIdToName)
+        {
+            var name = threadIdToName.GetValueOrDefault(t.ManagedThreadId, t.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return t.ManagedThreadId.ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                return name;
+            }
         }
 
         private Dictionary<int, string> GetThreadIdToName(ClrRuntime runtime)
@@ -129,7 +144,6 @@ namespace NetCoreAdmin.Threaddump
                 {
                     continue;
                 }
-               
             }
 
             return result;
@@ -146,6 +160,7 @@ namespace NetCoreAdmin.Threaddump
             {
                 return "BLOCKED";
             }
+
             // i do not know if WAITING, TIMED_WAITING are even possible for clrthread
             if (!t.IsAlive)
             {
@@ -153,20 +168,6 @@ namespace NetCoreAdmin.Threaddump
             }
 
             return "RUNNABLE";
-        }
-
-        private static string? GetThreadName(ClrThread t, Dictionary<int, string> threadIdToName)
-        {
-            var name = threadIdToName.GetValueOrDefault(t.ManagedThreadId, t.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return t.ManagedThreadId.ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                return name;
-            }
         }
     }
 }

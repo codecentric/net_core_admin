@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NetCoreAdmin;
 using NetCoreAdmin.Controllers;
 using NetCoreAdmin.Health;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NetCoreAdminTest.ControllerTests
@@ -40,6 +40,5 @@ namespace NetCoreAdminTest.ControllerTests
             resultData.StatusCode.Should().Equals(200);
             ((HealthData)resultData.Value).Status.Should().Equals("Unhealthy");
         }
-
     }
 }

@@ -1,30 +1,29 @@
-﻿using Flurl;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Flurl;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Nactuator
 {
     public class ApplicationBuilder : IApplicationBuilder
     {
         // todo health url should be integrated with the healthcheck package
-
         private readonly IWebHostEnvironment environment;
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly SpringBootConfig config;
-           
 
         public ApplicationBuilder(IWebHostEnvironment environment, IEnumerable<IMetadataProvider> metadataProviders, IOptionsMonitor<SpringBootConfig> optionsAccessor)
         {
             this.environment = environment;
             this.metadataProviders = metadataProviders;
-  
+
             if (optionsAccessor == null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
             }
+
             config = optionsAccessor.CurrentValue;
         }
 
@@ -32,7 +31,7 @@ namespace Nactuator
         /// Relevant SBA classes: https://github.com/codecentric/spring-boot-admin/blob/master/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/InstanceProperties.java
         /// https://github.com/codecentric/spring-boot-admin/blob/master/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/registration/DefaultApplicationFactory.java
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An Application</returns>
         public virtual Application CreateApplication()
         {
             var application = config.Application;
@@ -84,7 +83,6 @@ namespace Nactuator
             {
                 throw new DuplicateKeyException("Metadata cannot contain duplicate keys" + e.Message, e);
             }
-
         }
 
         private Uri GetServiceUrl()
@@ -94,8 +92,7 @@ namespace Nactuator
 
         private Uri GetManagementUrl()
         {
-
-            return new Uri(Url.Combine(GetServiceUrl().ToString(), "/actuator")); 
+            return new Uri(Url.Combine(GetServiceUrl().ToString(), "/actuator"));
         }
     }
 }
