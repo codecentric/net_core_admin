@@ -13,6 +13,8 @@ using NetCoreAdmin.Mappings;
 using NetCoreAdmin.Metrics;
 using NetCoreAdmin.Threaddump;
 
+[assembly: CLSCompliant(false)] // we consume lots of types of Asp.Net Core which are not compliant, too.
+
 namespace Nactuator
 {
     public static class NetCoreAdminServiceExtensions

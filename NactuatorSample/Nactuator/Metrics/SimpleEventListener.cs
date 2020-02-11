@@ -12,11 +12,11 @@ namespace NetCoreAdmin.Metrics
 {
     public class SimpleEventListener : EventListener, ISimpleEventListener
     {
-        private static List<string> ignoredTagPayloads = new List<string>() { "Name", "DisplayName", "Mean", "Increment", "CounterType" };
+        private static readonly List<string> IgnoredTagPayloads = new List<string>() { "Name", "DisplayName", "Mean", "Increment", "CounterType" };
         private readonly EventLevel level;
         private readonly ILogger<SimpleEventListener> logger;
 
-        private ConcurrentStack<string> missedMessages = new ConcurrentStack<string>();
+        private readonly ConcurrentStack<string> missedMessages = new ConcurrentStack<string>();
 
         public SimpleEventListener(ILogger<SimpleEventListener> logger)
             : base()
@@ -142,7 +142,7 @@ namespace NetCoreAdmin.Metrics
 
         private IEnumerable<AvailableTag> GetTags(IDictionary<string, object> eventPayload)
         {
-            return eventPayload.Where(x => !ignoredTagPayloads.Contains(x.Key)).Select(kvp => new AvailableTag()
+            return eventPayload.Where(x => !IgnoredTagPayloads.Contains(x.Key)).Select(kvp => new AvailableTag()
             {
                 Tag = kvp.Key,
                 Values = new List<string>() { kvp.Value.ToString()! },

@@ -8,6 +8,7 @@ using Nactuator.Client;
 
 namespace Nactuator
 {
+    [CLSCompliant(false)]
     public class SpringBootClient : BackgroundService, ISpringBootClient
     {
         private readonly ILogger<SpringBootClient> logger;
