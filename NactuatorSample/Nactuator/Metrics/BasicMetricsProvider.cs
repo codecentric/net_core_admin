@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace NetCoreAdmin.Metrics
 {
     public class BasicMetricsProvider : IMetricsProvider
     {
         private readonly ISimpleEventListener eventListener;
+        private readonly ILogger<BasicMetricsProvider> logger;
         private readonly Dictionary<string, Func<MetricsData>> resolvers;
         private readonly ISystemStatisticsProvider systemStatisticsProvider;
+        private double maxGcCycleTime;
         private int peakThreads = 0;
+        private double totalGcTime;
 
-        public BasicMetricsProvider(ISimpleEventListener eventListener, ISystemStatisticsProvider systemStatisticsProvider)
+        public BasicMetricsProvider(ILogger<BasicMetricsProvider> logger, ISimpleEventListener eventListener, ISystemStatisticsProvider systemStatisticsProvider)
         {
             // list of providers especially for SBA who expects this names
             resolvers = new Dictionary<string, Func<MetricsData>>()
@@ -25,10 +29,13 @@ namespace NetCoreAdmin.Metrics
                 { "jvm.threads.live", GetLiveThreads },
                 { "jvm.threads.daemon", GetDaemonThreads },
                 { "jvm.threads.peak", GetPeakThreads },
+                { "jvm.gc.pause", GetGCPause },
             };
 
             this.eventListener = eventListener ?? throw new ArgumentNullException(nameof(eventListener));
-            this.systemStatisticsProvider = systemStatisticsProvider;
+            this.systemStatisticsProvider = systemStatisticsProvider ?? throw new ArgumentNullException(nameof(systemStatisticsProvider));
+            this.logger = logger;
+            this.eventListener.GCCollectionEvent += EventListener_GCCollectionEvent;
         }
 
         public MetricsData GetMetricByName(string name)
@@ -51,6 +58,17 @@ namespace NetCoreAdmin.Metrics
             List<string> metrics = eventListener.Metrics.Keys.ToList();
             metrics.AddRange(resolvers.Keys);
             return metrics;
+        }
+
+        private void EventListener_GCCollectionEvent(object? sender, EventArgs e)
+        {
+            var metricsData = ((GcTotalTimeEventArgs)e).MetricsData;
+            double gcTime = GetGCTimeFrom(metricsData);
+            totalGcTime += gcTime;
+            if (gcTime > maxGcCycleTime)
+            {
+                maxGcCycleTime = gcTime;
+            }
         }
 
         private MetricsData GetCPUCount()
@@ -82,6 +100,60 @@ namespace NetCoreAdmin.Metrics
                 Description = "The current number of live daemon threads - always 0 since .Net does not have the concept",
                 Measurements = result,
             };
+        }
+
+        private double GetGCCount()
+        {
+            // todo move to systemstats?
+            int count = 0;
+            for (int i = 0; i < GC.MaxGeneration; i++)
+            {
+                count += GC.CollectionCount(i);
+            }
+
+            return count;
+        }
+
+        private MetricsData GetGCPause()
+        {
+            var data = new List<Measurement>()
+            {
+                new Measurement()
+                {
+                    Statistic = "COUNT", Value = GetGCCount(), // num of gc cycles
+                },
+                new Measurement()
+                {
+                    Statistic = "TOTAL_TIME", Value = totalGcTime, // total time in seconds
+                },
+                new Measurement()
+                {
+                    Statistic = "MAX", Value = maxGcCycleTime, // longest time in gc in seconds
+                },
+            };
+
+            return new MetricsData()
+            {
+                Name = "jvm.gc.pause",
+                BaseUnit = "seconds",
+                Description = "Time spent in GC pause",
+                Measurements = data,
+            };
+        }
+
+        private double GetGCTimeFrom(MetricsData metric)
+        {
+            var interval = metric.AvailableTags.Where(x => x.Tag == "IntervalSec").Select(x => double.Parse(x.Values.First(), CultureInfo.InvariantCulture)).Single();
+            var percent = metric.Measurements.First().Value;
+
+            if (Math.Abs(percent) < 0.00001)
+            {
+                return 0;
+            }
+
+            var result = interval * (percent * 0.01);
+            logger.LogDebug("spent {seconds} seconds in garbage collection (gc)", result);
+            return result;
         }
 
         private MetricsData GetLiveThreads()

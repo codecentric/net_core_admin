@@ -33,6 +33,8 @@ namespace NetCoreAdmin.Metrics
             }
         }
 
+        public event EventHandler GCCollectionEvent = default!;
+
         public int EventCount { get; private set; } = 0;
 
         public ConcurrentDictionary<string, MetricsData> Metrics { get; }
@@ -97,6 +99,11 @@ namespace NetCoreAdmin.Metrics
                             AvailableTags = GetTags(eventPayload),
                         };
                         Metrics[name] = metricsData;
+
+                        if (name == "time-in-gc")
+                        {
+                            OnGCCollectionEvent(new GcTotalTimeEventArgs(metricsData));
+                        }
                     }
                     else
                     {
@@ -106,6 +113,32 @@ namespace NetCoreAdmin.Metrics
             }
 
             // there are lots of things which are not EventCounters ,e .g. opened connections from/to. Would be interesting to see if we can derive stats from this
+        }
+
+        protected virtual void OnGCCollectionEvent(EventArgs e)
+        {
+            EventHandler handler = GCCollectionEvent;
+            handler?.Invoke(this, e);
+        }
+
+        private static string GetValue(KeyValuePair<string, object> kvp)
+        {
+            if (kvp.Value is double)
+            {
+                return ((double)kvp.Value).ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (kvp.Value is float)
+            {
+                return ((float)kvp.Value).ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (kvp.Value is int)
+            {
+                return ((int)kvp.Value).ToString(CultureInfo.InvariantCulture);
+            }
+
+            return kvp.Value.ToString()!;
         }
 
         private IEnumerable<Measurement> GetMeasurement(IDictionary<string, object> eventPayload)
@@ -145,7 +178,7 @@ namespace NetCoreAdmin.Metrics
             return eventPayload.Where(x => !IgnoredTagPayloads.Contains(x.Key)).Select(kvp => new AvailableTag()
             {
                 Tag = kvp.Key,
-                Values = new List<string>() { kvp.Value.ToString()! },
+                Values = new List<string>() { GetValue(kvp) },
             }).ToList();
         }
     }
