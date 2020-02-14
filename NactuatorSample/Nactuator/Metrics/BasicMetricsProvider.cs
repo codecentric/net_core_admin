@@ -84,6 +84,7 @@ namespace NetCoreAdmin.Metrics
 
         private MetricsData GetDaemonThreads()
         {
+            // todo if SBA would support this it would be nice to show threadpool threads
             var result = new List<Measurement>()
             {
                 new Measurement
@@ -102,25 +103,13 @@ namespace NetCoreAdmin.Metrics
             };
         }
 
-        private double GetGCCount()
-        {
-            // todo move to systemstats?
-            int count = 0;
-            for (int i = 0; i < GC.MaxGeneration; i++)
-            {
-                count += GC.CollectionCount(i);
-            }
-
-            return count;
-        }
-
         private MetricsData GetGCPause()
         {
             var data = new List<Measurement>()
             {
                 new Measurement()
                 {
-                    Statistic = "COUNT", Value = GetGCCount(), // num of gc cycles
+                    Statistic = "COUNT", Value = systemStatisticsProvider.GetGCCount(), // num of gc cycles
                 },
                 new Measurement()
                 {
@@ -228,14 +217,12 @@ namespace NetCoreAdmin.Metrics
 
         private MetricsData GetProcessUptime()
         {
-            var process = Process.GetCurrentProcess();
-            var uptime = DateTime.UtcNow - process.StartTime.ToUniversalTime();
             return new MetricsData()
             {
                 Name = "process.uptime",
                 BaseUnit = "seconds",
                 Description = "The uptime of the process",
-                Measurements = new List<Measurement>() { new Measurement() { Statistic = "VALUE", Value = uptime.TotalSeconds } },
+                Measurements = new List<Measurement>() { new Measurement() { Statistic = "VALUE", Value = systemStatisticsProvider.GetProcessUptime().TotalSeconds } },
             };
         }
 

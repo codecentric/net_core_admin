@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -40,12 +41,14 @@ namespace NetCoreAdminTest.Metrics
 
             var systemStatisticsProviderMock = new Mock<ISystemStatisticsProvider>();
 
+            TimeSpan uptime = new TimeSpan(0, 1, 0);
+            systemStatisticsProviderMock.Setup(x => x.GetProcessUptime()).Returns(uptime);
+
             var basicMetricsProvider = new BasicMetricsProvider(loggerMock, eventListenerMock.Object, systemStatisticsProviderMock.Object);
 
-            // no direct test of uptime, to error prone
             basicMetricsProvider.GetMetricNames().Should().Contain("process.uptime");
             var metric = basicMetricsProvider.GetMetricByName("process.uptime");
-            metric.Measurements.First().Value.Should().BeGreaterThan(0);
+            metric.Measurements.First().Value.Should().Be(uptime.TotalSeconds);
         }
 
         [Fact]
@@ -208,6 +211,7 @@ namespace NetCoreAdminTest.Metrics
             };
 
             var systemStatisticsProviderMock = new Mock<ISystemStatisticsProvider>();
+            systemStatisticsProviderMock.Setup(x => x.GetGCCount()).Returns(2);
             var basicMetricsProvider = new BasicMetricsProvider(loggerMock, eventListenerMock.Object, systemStatisticsProviderMock.Object);
 
             eventListenerMock.Raise(x => x.GCCollectionEvent += null, new GcTotalTimeEventArgs(firstEvent));
@@ -218,7 +222,7 @@ namespace NetCoreAdminTest.Metrics
 
             metric.Measurements.Should().HaveCount(3);
 
-            // COUNT difficult to test
+            metric.Measurements.First(x => x.Statistic == "COUNT").Value.Should().Be(2);
             metric.Measurements.First(x => x.Statistic == "TOTAL_TIME").Value.Should().Be(0.75);
             metric.Measurements.First(x => x.Statistic == "MAX").Value.Should().Be(0.5);
         }
