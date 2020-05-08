@@ -121,24 +121,24 @@ namespace NetCoreAdmin.Metrics
             handler?.Invoke(this, e);
         }
 
-        private static string GetValue(KeyValuePair<string, object> kvp)
+        private static double GetValue(KeyValuePair<string, object> kvp)
         {
             if (kvp.Value is double)
             {
-                return ((double)kvp.Value).ToString(CultureInfo.InvariantCulture);
+                return (double)kvp.Value;
             }
 
             if (kvp.Value is float)
             {
-                return ((float)kvp.Value).ToString(CultureInfo.InvariantCulture);
+                return Convert.ToDouble((float)kvp.Value);
             }
 
             if (kvp.Value is int)
             {
-                return ((int)kvp.Value).ToString(CultureInfo.InvariantCulture);
+                return Convert.ToDouble((int)kvp.Value);
             }
 
-            return kvp.Value.ToString()!;
+            return 0.0!;
         }
 
         private IEnumerable<Measurement> GetMeasurement(IDictionary<string, object> eventPayload)
@@ -178,7 +178,7 @@ namespace NetCoreAdmin.Metrics
             return eventPayload.Where(x => !IgnoredTagPayloads.Contains(x.Key)).Select(kvp => new AvailableTag()
             {
                 Tag = kvp.Key,
-                Values = new List<string>() { GetValue(kvp) },
+                Values = new Dictionary<string, double> { { kvp.Key, GetValue(kvp) } },
             }).ToList();
         }
     }

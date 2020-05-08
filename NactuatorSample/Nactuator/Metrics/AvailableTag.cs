@@ -6,7 +6,7 @@ namespace NetCoreAdmin.Metrics
     {
         public string Tag { get; set; } = string.Empty;
 
-        public IEnumerable<string> Values { get; set; } = default!;
+        public Dictionary<string, double> Values { get; set; } = new Dictionary<string, double>();
 
         public override string ToString()
         {

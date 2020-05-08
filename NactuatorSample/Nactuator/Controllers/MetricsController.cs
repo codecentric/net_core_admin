@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -53,13 +55,25 @@ namespace NetCoreAdmin.Controllers
         }
 
         [HttpGet("{metric}")]
-        public ActionResult<MetricsData> GetByName([FromRoute]string metric)
+        public ActionResult<MetricsData> GetByName([FromRoute]string metric, [FromQuery] string? tag = "")
         {
             if (provider == null)
             {
                 return StatusCode(403);
             }
 
+            if (!string.IsNullOrWhiteSpace(tag))
+            {
+                return GetByNameAndTag(metric, tag);
+            }
+            else
+            {
+                return GetName(metric);
+            }
+        }
+
+        private ActionResult<MetricsData> GetName(string metric)
+        {
             try
             {
                 var metricData = provider.GetMetricByName(metric);
@@ -78,22 +92,30 @@ namespace NetCoreAdmin.Controllers
             }
         }
 
-        [HttpGet("{metric}")]
-        public ActionResult<MetricsData> GetByNameAndTag([FromRoute]string metric, [FromQuery][DisallowNull] string drilldown )
+        private ActionResult<MetricsData> GetByNameAndTag(string metric, string drilldown )
         {
-            if (string.IsNullOrWhiteSpace(drilldown))
-            {
-                return BadRequest(); // todo return rfc error
-            }
-
-            if (provider == null)
-            {
-                return StatusCode(403);
-            }
-
             var splitted = drilldown.Split(':');
             if (splitted.Length != 2)
             {
+                // ugly hack for the single sba request for: metrics/jvm.memory.used?tag=area:nonheap,id:Metaspace
+                if (drilldown.ToUpperInvariant().Contains("METASPACE", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new MetricsData()
+                    {
+                        Name = "jvm.memory.used",
+                        BaseUnit = "bytes",
+                        Description = "The amount of used memory",
+                        Measurements = new List<Measurement>()
+                {
+                    new Measurement
+                    {
+                        Statistic = "VALUE",
+                        Value = 0,
+                    },
+                },
+                    };
+                    }
+
                 return BadRequest(); // todo return rfc error
             }
 

@@ -184,13 +184,12 @@ namespace NetCoreAdminTest.Metrics
                 Measurements = new List<Measurement>() { new Measurement() { Statistic = "VALUE", Value = 50 } },
                 AvailableTags = new List<AvailableTag>()
                 {
-                    new AvailableTag() { Tag = "StandardDeviation", Values = new string[] { "0" }, },
-                    new AvailableTag() { Tag = "Count", Values = new string[] { "1" }, },
-                    new AvailableTag() { Tag = "Min", Values = new string[] { "0" } },
-                    new AvailableTag() { Tag = "Max", Values = new string[] { "0" } },
-                    new AvailableTag() { Tag = "IntervalSec", Values = new string[] { "1.00" } },
-                    new AvailableTag() { Tag = "Series", Values = new string[] { "Interval=1000" } },
-                    new AvailableTag() { Tag = "Min", Values = new string[] { "0" } },
+                    new AvailableTag() { Tag = "StandardDeviation", Values = new Dictionary<string, double> { { "StandardDeviation", 0.0 } }, },
+                    new AvailableTag() { Tag = "Count", Values = new Dictionary<string, double> { { "Count", 1.0 } }, },
+                    new AvailableTag() { Tag = "Min", Values = new Dictionary<string, double> { { "Min", 0.0 } }, },
+                    new AvailableTag() { Tag = "Max", Values = new Dictionary<string, double> { { "Max", 0.0 } }, },
+                    new AvailableTag() { Tag = "IntervalSec", Values = new Dictionary<string, double> { { "IntervalSec", 1.0 } }, },
+                    new AvailableTag() { Tag = "Series", Values = new Dictionary<string, double> { { "Series", 1000.0 } }, },
                 },
             };
 
@@ -200,13 +199,12 @@ namespace NetCoreAdminTest.Metrics
                 Measurements = new List<Measurement>() { new Measurement() { Statistic = "VALUE", Value = 25 } },
                 AvailableTags = new List<AvailableTag>()
                 {
-                    new AvailableTag() { Tag = "StandardDeviation", Values = new string[] { "0" }, },
-                    new AvailableTag() { Tag = "Count", Values = new string[] { "1" }, },
-                    new AvailableTag() { Tag = "Min", Values = new string[] { "0" } },
-                    new AvailableTag() { Tag = "Max", Values = new string[] { "0" } },
-                    new AvailableTag() { Tag = "IntervalSec", Values = new string[] { "1.00" } },
-                    new AvailableTag() { Tag = "Series", Values = new string[] { "Interval=1000" } },
-                    new AvailableTag() { Tag = "Min", Values = new string[] { "0" } },
+                    new AvailableTag() { Tag = "StandardDeviation", Values = new Dictionary<string, double> { { "StandardDeviation", 0.0 } }, },
+                    new AvailableTag() { Tag = "Count", Values = new Dictionary<string, double> { { "Count", 1.0 } }, },
+                    new AvailableTag() { Tag = "Min", Values = new Dictionary<string, double> { { "Min", 0.0 } }, },
+                    new AvailableTag() { Tag = "Max", Values = new Dictionary<string, double> { { "Max", 0.0 } }, },
+                    new AvailableTag() { Tag = "IntervalSec", Values = new Dictionary<string, double> { { "IntervalSec", 1.0 } }, },
+                    new AvailableTag() { Tag = "Series", Values = new Dictionary<string, double> { { "Series", 1000.0 } }, },
                 },
             };
 
