@@ -30,12 +30,39 @@ namespace NetCoreAdmin.Metrics
                 { "jvm.threads.daemon", GetDaemonThreads },
                 { "jvm.threads.peak", GetPeakThreads },
                 { "jvm.gc.pause", GetGCPause },
+                { "jvm.memory.max", GetMemoryMax},
             };
 
             this.eventListener = eventListener ?? throw new ArgumentNullException(nameof(eventListener));
             this.systemStatisticsProvider = systemStatisticsProvider ?? throw new ArgumentNullException(nameof(systemStatisticsProvider));
             this.logger = logger;
             this.eventListener.GCCollectionEvent += EventListener_GCCollectionEvent;
+        }
+
+        private MetricsData GetMemoryMax()
+        {
+            return new MetricsData()
+            {
+                Name = "jvm.memory.max",
+                BaseUnit = "bytes",
+                Description = "The maximum amount of memory in bytes that can be used for memory management",
+                Measurements = new List<Measurement>()
+                {
+                    new Measurement
+                    {
+                        Statistic = "VALUE",
+                        Value = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes,
+                    },
+                },
+                AvailableTags = new List<AvailableTag>()
+                {
+                    new AvailableTag()
+                    {
+                        Tag = "area",
+                        Values = new List<string>() { "heap", "nonheap" },
+                    },
+                },
+            };
         }
 
         public MetricsData GetMetricByName(string name)
@@ -237,6 +264,19 @@ namespace NetCoreAdmin.Metrics
                 Description = "The \"recent cpu usage\" for the whole system",
                 Measurements = result,
             };
+        }
+
+        public MetricsData GetMetricByNameAndTag(string name, ActuatorTag actuatorTag)
+        {
+            // todo fix errors in Simpleeventlister - it assigns value as a string but this is worng!
+            var metric = GetMetricByName(name);
+            var result = metric.AvailableTags.FirstOrDefault(x => x.Tag == actuatorTag.Tag);
+            if (result == null)
+            {
+                throw new UnknownTagErrorException(name, actuatorTag);
+            }
+
+            return null;
         }
     }
 }

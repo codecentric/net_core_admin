@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -62,6 +63,47 @@ namespace NetCoreAdmin.Controllers
             try
             {
                 var metricData = provider.GetMetricByName(metric);
+
+                var result = new JsonResult(metricData)
+                {
+                    ContentType = Constants.ActuatorContentType,
+                };
+
+                return result;
+            }
+            catch (KeyNotFoundException)
+            {
+                logger.LogDebug("'{metric}' not found", metric);
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{metric}")]
+        public ActionResult<MetricsData> GetByNameAndTag([FromRoute]string metric, [FromQuery][DisallowNull] string drilldown )
+        {
+            if (string.IsNullOrWhiteSpace(drilldown))
+            {
+                return BadRequest(); // todo return rfc error
+            }
+
+            if (provider == null)
+            {
+                return StatusCode(403);
+            }
+
+            var splitted = drilldown.Split(':');
+            if (splitted.Length != 2)
+            {
+                return BadRequest(); // todo return rfc error
+            }
+
+            var tag = splitted[0];
+            var value = splitted[1];
+
+            var actuatorTag = new ActuatorTag(tag, value);
+            try
+            {
+                var metricData = provider.GetMetricByNameAndTag(metric, actuatorTag);
 
                 var result = new JsonResult(metricData)
                 {
