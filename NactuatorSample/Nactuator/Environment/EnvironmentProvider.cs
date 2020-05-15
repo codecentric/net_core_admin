@@ -57,11 +57,6 @@ namespace Nactuator
             return sources;
         }
 
-        private void AddPidProvider(List<PropertySources> sources)
-        {
-            sources.Add(new PropertySources("NetCoreAdminInformationProvider", new Dictionary<string, PropertyValue>() { { "PID", new PropertyValue(Process.GetCurrentProcess().Id.ToString(System.Globalization.CultureInfo.InvariantCulture)) } }));
-        }
-
         private static string GetProviderName(IConfigurationProvider provider, IEnumerable<string> names, int postFix = 0)
         {
             var name = $"{provider.GetType().Name} - {postFix}";
@@ -72,6 +67,11 @@ namespace Nactuator
             }
 
             return name;
+        }
+
+        private void AddPidProvider(List<PropertySources> sources)
+        {
+            sources.Add(new PropertySources("NetCoreAdminInformationProvider", new Dictionary<string, PropertyValue>() { { "PID", new PropertyValue(Process.GetCurrentProcess().Id.ToString(System.Globalization.CultureInfo.InvariantCulture)) } }));
         }
 
         private HashSet<string> GetFullKeyNames(IConfigurationProvider provider, string rootKey, HashSet<string> initialKeys)

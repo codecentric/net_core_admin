@@ -27,15 +27,5 @@ namespace NetCoreAdminTest
             var healthData = await sut.GetHealthAsync().ConfigureAwait(false);
             healthData.Status.Should().Be("Healthy");
         }
-
-        [Fact]
-        public async Task ReturnsResultMessages()
-        {
-            var logger = new Mock<ILogger<HealthProvider>>();
-
-            var sut = new HealthProvider(logger.Object, new HealthCheckServiceStub());
-            var healthData = await sut.GetHealthAsync().ConfigureAwait(false);
-            healthData.Status.Should().Be("Healthy");
-        }
     }
 }

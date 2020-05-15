@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +29,7 @@ namespace NetCoreAdmin.Metrics
                 { "jvm.threads.daemon", GetDaemonThreads },
                 { "jvm.threads.peak", GetPeakThreads },
                 { "jvm.gc.pause", GetGCPause },
-                { "jvm.memory.max", GetMemoryMax}, // todo can these three better obtained from event sources?
+                { "jvm.memory.max", GetMemoryMax }, // todo can these three better obtained from event sources?
                 { "jvm.memory.used", GetMemoryUsed },
                 { "jvm.memory.committed", GetMemoryComitted },
             };
@@ -39,102 +38,6 @@ namespace NetCoreAdmin.Metrics
             this.systemStatisticsProvider = systemStatisticsProvider ?? throw new ArgumentNullException(nameof(systemStatisticsProvider));
             this.logger = logger;
             this.eventListener.GCCollectionEvent += EventListener_GCCollectionEvent;
-        }
-
-        private MetricsData GetMemoryComitted()
-        {
-            // likely bogus, I'm not sure these data even exist
-            var commited = GC.GetTotalMemory(false);
-            return new MetricsData()
-            {
-                Name = "jvm.memory.committed",
-                BaseUnit = "bytes",
-                Description = "The amount of committed memory",
-                Measurements = new List<Measurement>()
-                {
-                    new Measurement
-                    {
-                        Statistic = "VALUE",
-                        Value = commited,
-                    },
-                },
-                AvailableTags = new List<AvailableTag>()
-                {
-                    new AvailableTag()
-                    {
-                        Tag = "area",
-                        Values = new Dictionary<string, double>()
-                        {
-                            { "heap", commited } ,
-                            { "nonheap", commited },
-                        },
-                    },
-                },
-            };
-        }
-
-        private MetricsData GetMemoryUsed()
-        {
-            var heapSize = GC.GetGCMemoryInfo().HeapSizeBytes;
-            var totalSize = GC.GetTotalMemory(false);
-            var nonHeap = totalSize - heapSize;
-            return new MetricsData()
-            {
-                Name = "jvm.memory.used",
-                BaseUnit = "bytes",
-                Description = "The amount of used memory",
-                Measurements = new List<Measurement>()
-                {
-                    new Measurement
-                    {
-                        Statistic = "VALUE",
-                        Value = totalSize,
-                    },
-                },
-                AvailableTags = new List<AvailableTag>()
-                {
-                    new AvailableTag()
-                    {
-                        Tag = "area",
-                        Values = new Dictionary<string, double>() 
-                        {
-                            { "heap", heapSize } ,
-                            { "nonheap", nonHeap },
-                        },
-                    },
-                },
-            };
-        }
-
-        private MetricsData GetMemoryMax()
-        {
-            long totalAvailableMemory = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
-            return new MetricsData()
-            {
-                Name = "jvm.memory.max",
-                BaseUnit = "bytes",
-                Description = "The maximum amount of memory in bytes that can be used for memory management",
-                Measurements = new List<Measurement>()
-                {
-                    new Measurement
-                    {
-                        Statistic = "VALUE",
-                        Value = totalAvailableMemory,
-                    },
-                },
-                AvailableTags = new List<AvailableTag>()
-                {
-                    new AvailableTag()
-                    {
-                        Tag = "area",
-                        Values = new Dictionary<string, double>()
-                        {
-                            { "heap", totalAvailableMemory } ,  // todo probably wrong
-                            { "nonheap", totalAvailableMemory }, // todo probably wrong
-                        },
-                    },
-                },
-            };
         }
 
         public MetricsData GetMetricByName(string name)
@@ -150,6 +53,36 @@ namespace NetCoreAdmin.Metrics
             }
 
             throw new KeyNotFoundException(name);
+        }
+
+        public MetricsData GetMetricByNameAndTag(string metric, ActuatorTag actuatorTag)
+        {
+            if (actuatorTag is null)
+            {
+                throw new ArgumentNullException(nameof(actuatorTag));
+            }
+
+            var metricData = GetMetricByName(metric);
+            var area = metricData.AvailableTags.FirstOrDefault(x => x.Tag == actuatorTag.Tag);
+            if (area == null)
+            {
+                throw new UnknownTagErrorException(metric, actuatorTag);
+            }
+
+            if (!area.Values.ContainsKey(actuatorTag.Value))
+            {
+                throw new UnknownTagErrorException(metric, actuatorTag);
+            }
+
+            var tagData = area.Values.FirstOrDefault(x => x.Key == actuatorTag.Value);
+
+            return new MetricsData()
+            {
+                Name = tagData.Key,
+                BaseUnit = null!,
+                Description = string.Empty,
+                Measurements = new List<Measurement>() { new Measurement() { Statistic = tagData.Key, Value = tagData.Value } },
+            };
         }
 
         public IEnumerable<string> GetMetricNames()
@@ -269,6 +202,102 @@ namespace NetCoreAdmin.Metrics
             };
         }
 
+        private MetricsData GetMemoryComitted()
+        {
+            // likely bogus, I'm not sure these data even exist
+            var commited = GC.GetTotalMemory(false);
+            return new MetricsData()
+            {
+                Name = "jvm.memory.committed",
+                BaseUnit = "bytes",
+                Description = "The amount of committed memory",
+                Measurements = new List<Measurement>()
+                {
+                    new Measurement
+                    {
+                        Statistic = "VALUE",
+                        Value = commited,
+                    },
+                },
+                AvailableTags = new List<AvailableTag>()
+                {
+                    new AvailableTag()
+                    {
+                        Tag = "area",
+                        Values = new Dictionary<string, double>()
+                        {
+                            { "heap", commited },
+                            { "nonheap", commited },
+                        },
+                    },
+                },
+            };
+        }
+
+        private MetricsData GetMemoryMax()
+        {
+            long totalAvailableMemory = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
+            return new MetricsData()
+            {
+                Name = "jvm.memory.max",
+                BaseUnit = "bytes",
+                Description = "The maximum amount of memory in bytes that can be used for memory management",
+                Measurements = new List<Measurement>()
+                {
+                    new Measurement
+                    {
+                        Statistic = "VALUE",
+                        Value = totalAvailableMemory,
+                    },
+                },
+                AvailableTags = new List<AvailableTag>()
+                {
+                    new AvailableTag()
+                    {
+                        Tag = "area",
+                        Values = new Dictionary<string, double>()
+                        {
+                            { "heap", totalAvailableMemory },  // todo probably wrong
+                            { "nonheap", totalAvailableMemory }, // todo probably wrong
+                        },
+                    },
+                },
+            };
+        }
+
+        private MetricsData GetMemoryUsed()
+        {
+            var heapSize = GC.GetGCMemoryInfo().HeapSizeBytes;
+            var totalSize = GC.GetTotalMemory(false);
+            var nonHeap = totalSize - heapSize;
+            return new MetricsData()
+            {
+                Name = "jvm.memory.used",
+                BaseUnit = "bytes",
+                Description = "The amount of used memory",
+                Measurements = new List<Measurement>()
+                {
+                    new Measurement
+                    {
+                        Statistic = "VALUE",
+                        Value = totalSize,
+                    },
+                },
+                AvailableTags = new List<AvailableTag>()
+                {
+                    new AvailableTag()
+                    {
+                        Tag = "area",
+                        Values = new Dictionary<string, double>()
+                        {
+                            { "heap", heapSize },
+                            { "nonheap", nonHeap },
+                        },
+                    },
+                },
+            };
+        }
+
         private MetricsData GetPeakThreads()
         {
             var threadCount = Process.GetCurrentProcess().Threads.Count;
@@ -339,36 +368,6 @@ namespace NetCoreAdmin.Metrics
                 BaseUnit = null!,
                 Description = "The \"recent cpu usage\" for the whole system",
                 Measurements = result,
-            };
-        }
-
-        public MetricsData GetMetricByNameAndTag(string metric, ActuatorTag actuatorTag)
-        {
-            if (actuatorTag is null)
-            {
-                throw new ArgumentNullException(nameof(actuatorTag));
-            }
-
-            var metricData = GetMetricByName(metric);
-            var area = metricData.AvailableTags.FirstOrDefault(x => x.Tag == actuatorTag.Tag);
-            if (area == null)
-            {
-                throw new UnknownTagErrorException(metric, actuatorTag);
-            }
-
-            if (!area.Values.ContainsKey(actuatorTag.Value))
-            {
-                throw new UnknownTagErrorException(metric, actuatorTag);
-            }
-
-            var tagData = area.Values.FirstOrDefault(x => x.Key == actuatorTag.Value);
-
-            return new MetricsData()
-            {
-                Name = tagData.Key,
-                BaseUnit = null!,
-                Description = string.Empty,
-                Measurements = new List<Measurement>() { new Measurement() { Statistic = tagData.Key, Value = tagData.Value } },
             };
         }
     }

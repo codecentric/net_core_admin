@@ -1,5 +1,5 @@
-﻿using Nactuator;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Nactuator;
 
 namespace NetCoreAdmin.Controllers
 {
@@ -17,6 +17,5 @@ namespace NetCoreAdmin.Controllers
         public IReadOnlyList<string> ActiveProfiles { get; }
 
         public IReadOnlyCollection<PropertySources> PropertySources { get; }
-
     }
 }

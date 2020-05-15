@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Nactuator;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NetCoreAdmin.Controllers
 {
@@ -43,7 +42,7 @@ namespace NetCoreAdmin.Controllers
                 if (source.Properties.ContainsKey(prop))
                 {
                     var value = source.Properties[prop];
-                    var result = new SinglePropertyResult(new PropertyResult() { Source=source.Name, Value=value.Value },  new List<string>(), new List<PropertySources> { source });
+                    var result = new SinglePropertyResult(new PropertyResult() { Source = source.Name, Value = value.Value },  new List<string>(), new List<PropertySources> { source });
                     var jsonResult = new JsonResult(result)
                     {
                         ContentType = Constants.ActuatorContentType,
