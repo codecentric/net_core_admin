@@ -28,7 +28,7 @@ namespace NactuatorTest
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
-            result.Should().HaveCount(1);
+            result.Should().HaveCount(2); // 2 because there is the default PID Provider of Net Core Admin
             var firstResult = result.First();
             firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
             firstResult.Properties.Should().HaveCount(2);
@@ -62,7 +62,7 @@ namespace NactuatorTest
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
-            result.Should().HaveCount(2);
+            result.Should().HaveCount(3);  // 3 because there is the default PID Provider of Net Core Admin
             var firstResult = result.First();
             var lastResult = result.Last();
             firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
