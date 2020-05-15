@@ -6,7 +6,9 @@ namespace NetCoreAdmin.Metrics
     {
         public string Tag { get; set; } = string.Empty;
 
-        public Dictionary<string, double> Values { get; internal set; } = new Dictionary<string, double>();
+#pragma warning disable CA2227 // Collection properties should be read only
+        public Dictionary<string, double> Values { get; set; } = new Dictionary<string, double>();
+#pragma warning restore CA2227 // Collection properties should be read only
 
         public override string ToString()
         {

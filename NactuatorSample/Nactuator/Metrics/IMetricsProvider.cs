@@ -7,6 +7,7 @@ namespace NetCoreAdmin.Metrics
         MetricsData GetMetricByName(string name);
 
         IEnumerable<string> GetMetricNames();
+
         MetricsData GetMetricByNameAndTag(string metric, ActuatorTag actuatorTag);
     }
 }

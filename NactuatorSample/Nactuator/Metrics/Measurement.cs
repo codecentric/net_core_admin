@@ -1,5 +1,4 @@
-﻿
-namespace NetCoreAdmin.Metrics
+﻿namespace NetCoreAdmin.Metrics
 {
     public class Measurement
     {
