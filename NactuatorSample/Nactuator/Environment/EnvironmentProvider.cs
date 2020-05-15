@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -51,7 +52,14 @@ namespace Nactuator
                 sources.Add(source);
             }
 
+            AddPidProvider(sources);
+
             return sources;
+        }
+
+        private void AddPidProvider(List<PropertySources> sources)
+        {
+            sources.Add(new PropertySources("NetCoreAdminInformationProvider", new Dictionary<string, PropertyValue>() { { "PID", new PropertyValue(Process.GetCurrentProcess().Id.ToString(System.Globalization.CultureInfo.InvariantCulture)) } }));
         }
 
         private static string GetProviderName(IConfigurationProvider provider, IEnumerable<string> names, int postFix = 0)
@@ -60,7 +68,7 @@ namespace Nactuator
 
             if (names.Contains(name))
             {
-                name = GetProviderName(provider, names, postFix += 1);
+                name = GetProviderName(provider, names, postFix + 1);
             }
 
             return name;
