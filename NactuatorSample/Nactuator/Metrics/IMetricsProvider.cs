@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace NetCoreAdmin.Metrics
 {
@@ -8,6 +7,7 @@ namespace NetCoreAdmin.Metrics
         MetricsData GetMetricByName(string name);
 
         IEnumerable<string> GetMetricNames();
+
         MetricsData GetMetricByNameAndTag(string metric, ActuatorTag actuatorTag);
     }
 }

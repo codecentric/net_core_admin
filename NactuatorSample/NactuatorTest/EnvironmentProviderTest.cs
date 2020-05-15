@@ -28,15 +28,15 @@ namespace NactuatorTest
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
-            result.Should().HaveCount(1);
-            var firstResult = result.First();
-            firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
-            firstResult.Properties.Should().HaveCount(2);
-            firstResult.Properties.Keys.Should().Contain("test2");
-            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("2"));
+            result.Should().HaveCount(2); // 2 because there is the default PID Provider of Net Core Admin
+            var prov = result.First();
+            prov.Name.Should().Be("MemoryConfigurationProvider - 0");
+            prov.Properties.Should().HaveCount(2);
+            prov.Properties.Keys.Should().Contain("test2");
+            prov.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("2"));
 
-            firstResult.Properties.Keys.Should().Contain("Logging:LogLevel:Microsoft.Hosting.Lifetime");
-            firstResult.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("3"));
+            prov.Properties.Keys.Should().Contain("Logging:LogLevel:Microsoft.Hosting.Lifetime");
+            prov.Properties.Values.Should().ContainEquivalentOf(new PropertyValue("3"));
         }
 
         [Fact]
@@ -62,9 +62,9 @@ namespace NactuatorTest
             var sut = new EnvironmentProvider(configurationRoot, null);
             var result = sut.ReadConfiguration();
             result.Should().NotBeNull();
-            result.Should().HaveCount(2);
+            result.Should().HaveCount(3);  // 3 because there is the default PID Provider of Net Core Admin
             var firstResult = result.First();
-            var lastResult = result.Last();
+            var lastResult = result.ElementAt(1);
             firstResult.Name.Should().Be("MemoryConfigurationProvider - 0");
             lastResult.Name.Should().Be("MemoryConfigurationProvider - 1");
         }

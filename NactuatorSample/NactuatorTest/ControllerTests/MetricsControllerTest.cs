@@ -91,7 +91,6 @@ namespace NetCoreAdminTest.ControllerTests
         public void GetByNameAsyncReturns404ForUnknownMetric()
         {
             var mock = new Mock<IMetricsProvider>();
-            var value = new MetricsData();
             mock.Setup(x => x.GetMetricByName(It.Is<string>(x => x == TestMetricName))).Throws(new KeyNotFoundException());
             var mockLogger = new Mock<ILogger<MetricsController>>();
             var controller = new MetricsController(mockLogger.Object, mock.Object);

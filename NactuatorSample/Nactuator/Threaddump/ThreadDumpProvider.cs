@@ -47,7 +47,6 @@ namespace NetCoreAdmin.Threaddump
             var pid = Process.GetCurrentProcess().Id;
             using var dataTarget = DataTarget.AttachToProcess(pid, 5000, AttachFlag.Passive);
 
-            // using var dataTarget = DataTarget.CreateSnapshotAndAttach(pid);
             var runtimeInfo = dataTarget.ClrVersions[0];
             ClrRuntime runtime = runtimeInfo.CreateRuntime();
 
@@ -95,7 +94,6 @@ namespace NetCoreAdmin.Threaddump
         {
             var fileAndLine = stackFrame.GetSourceLocation();
 
-            // Console.WriteLine(stackFrame.DisplayString);
             return new StackTrace()
             {
                 MethodName = stackFrame.ToString()!,
@@ -125,7 +123,7 @@ namespace NetCoreAdmin.Threaddump
             // no linq here since the result change due to the live process, defensive programming wins here.
             var result = new Dictionary<int, string>();
 
-            var objs = runtime.Heap.EnumerateObjects().ToList().Where(x => x.Type?.Name == "System.Threading.Thread");
+            var objs = runtime.Heap.EnumerateObjects().Where(x => x.Type?.Name == "System.Threading.Thread");
 
             foreach (var obj in objs)
             {
@@ -142,7 +140,9 @@ namespace NetCoreAdmin.Threaddump
                 catch (Exception)
 #pragma warning restore CA1031 // Do not catch general exception types
                 {
+#pragma warning disable S3626 // Jump statements should not be redundant
                     continue;
+#pragma warning restore S3626 // Jump statements should not be redundant
                 }
             }
 

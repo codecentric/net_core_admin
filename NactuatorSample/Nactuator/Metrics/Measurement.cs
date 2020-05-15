@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NetCoreAdmin.Metrics
+﻿namespace NetCoreAdmin.Metrics
 {
     public class Measurement
     {
