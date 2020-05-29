@@ -30,5 +30,11 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
-    - name: Push generated package to Nuget
-      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget }} --source https://api.nuget.org/v3/index.json
+    - name: Install gpr
+      run: dotnet tool install gpr --global
+    - name: gpr upload
+      run: find ${{env.working-directory}} -name "*.nupkg" | gpr push -k ${{secrets.GH_PACKAGE}} 
+    
+      
+#    - name: Push generated package to Nuget
+#      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget }} --source https://api.nuget.org/v3/index.json
