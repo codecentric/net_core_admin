@@ -31,4 +31,4 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
     - name: Push generated package to GitHub registry
-      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate
+      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --source "github"
