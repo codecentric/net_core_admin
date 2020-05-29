@@ -15,6 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -28,3 +30,6 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
+    - uses: aarnott/nbgv@master
+      id: nbgv
+    - run: echo 'SemVer2: ${{ steps.nbgv.outputs.SemVer2 }}'
