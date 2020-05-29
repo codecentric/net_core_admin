@@ -33,4 +33,10 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: nuget
-        path: ./NactuatorSample/Nactuator/**/*.nupkg
+        path: {{env.working-directory}}/Nactuator/**/*.nupkg
+    - uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
+      with:
+        nupkg-path:  {{env.working-directory}}/Nactuator/bin/debug/*.nupkg
+        repo-owner:  ChristianSauer
+        gh-user: ChristianSauer
+        token:  ${{ secrets.GITHUB_TOKEN }}
