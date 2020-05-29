@@ -31,4 +31,4 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
     - name: Push generated package to Nuget
-      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget } --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget }} --source https://api.nuget.org/v3/index.json
