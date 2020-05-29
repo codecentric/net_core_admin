@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      working-directory: ./
+      working-directory: ./NactuatorSample
 
     steps:
     - uses: actions/checkout@v2
