@@ -33,7 +33,7 @@ jobs:
     - name: Install gpr
       run: dotnet tool install gpr --global
     - name: gpr upload
-      run: find ${{env.working-directory}} -name "*.nupkg" | gpr push -k ${{secrets.GH_PACKAGE}} 
+      run: find -name "*.nupkg" -print -exec gpr push -k ${{secrets.GH_PACKAGE}} {} \;
     
       
 #    - name: Push generated package to Nuget
