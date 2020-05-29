@@ -20,10 +20,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
-        source-url: https://nuget.pkg.github.com/codecentric/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GhPackage}}        
+        dotnet-version: 3.1.101     
     - name: Install dependencies
       run: dotnet restore
       working-directory: ${{env.working-directory}}
@@ -33,5 +30,5 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
-    - name: Push generated package to GitHub registry
-      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate
+    - name: Push generated package to Nuget
+      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget } --source https://api.nuget.org/v3/index.json
