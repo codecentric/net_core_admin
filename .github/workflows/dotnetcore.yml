@@ -23,7 +23,7 @@ jobs:
         dotnet-version: 3.1.101
         source-url: https://nuget.pkg.github.com/codecentric/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}        
+        NUGET_AUTH_TOKEN: ${{secrets.GhPackage}}        
     - name: Install dependencies
       run: dotnet restore
       working-directory: ${{env.working-directory}}
