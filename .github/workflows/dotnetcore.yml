@@ -15,10 +15,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 3.1.101     
     - name: Install dependencies
       run: dotnet restore
       working-directory: ${{env.working-directory}}
@@ -28,3 +30,10 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ${{env.working-directory}}
+    - name: Install gpr
+      run: dotnet tool install gpr --global
+    - name: gpr upload
+      run: find -name "*.nupkg" -print -exec gpr push -k ${{secrets.GH_PACKAGE}} {} \;
+    - name: Push generated package to NuGet
+      if: github.ref == 'refs/heads/master'
+      run: dotnet nuget push ${{env.working-directory}}/Nactuator/bin/Release/*.nupkg --skip-duplicate --api-key ${{ secrets.Nuget }} --source https://api.nuget.org/v3/index.json
