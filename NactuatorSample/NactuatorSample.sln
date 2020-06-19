@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreAdminSample", "NactuatorSample\NetCoreAdminSample.csproj", "{42541571-57BA-41A1-BBD9-22DC2950099B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreAdmin.Sample", "NactuatorSample\NetCoreAdmin.Sample.csproj", "{42541571-57BA-41A1-BBD9-22DC2950099B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreAdmin", "Nactuator\NetCoreAdmin.csproj", "{522E058A-338D-4F6A-855B-9DE3243081A6}"
 EndProject

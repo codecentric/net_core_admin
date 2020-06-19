@@ -8,6 +8,18 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
+
+    <PackageId>NetCoreAdmin</PackageId>
+    <Authors>Christian Sauer</Authors>
+    <Company>codecentric</Company>
+    <Title>Net Core Admin</Title>
+    <PackageTags>ASP.Net Core;Spring Boot Admin;SBA</PackageTags>
+    <PackageDescription>Allows to integrate a ASP.NET Core Server with Spring Boot Admin. It allows to easily see the logs, configured routes, configured dependencies and memory usage.
+    See readme.md for examples and details</PackageDescription>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/codecentric/net_core_admin</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +35,10 @@
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.1.122004" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.1.91">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
